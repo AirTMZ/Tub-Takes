@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-Fuel Tier List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.0/crc32.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .tier-column {
+            border: 1px solid #4a5568;
+            border-radius: 0.375rem;
+            padding: 1rem;
+        }
+        .tier-item {
+            background-color: #2d3748;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            cursor: grab;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="p-6 max-w-4xl mx-auto">
+        <h1 class="text-4xl font-extrabold mb-4 text-center">G-Fuel Tier List</h1>
+        <p class="text-gray-400 text-center mb-6">Only rank the flavors you've tried.</p>
+        <div class="mb-4 flex flex-col items-center">
+            <input type="text" placeholder="Enter tier list code" id="inputCode" class="border p-2 w-80 mb-2 bg-gray-800 text-white text-center">
+            <div class="flex gap-4">
+                <button onclick="loadFromCode()" class="bg-blue-600 px-4 py-2 rounded">Load from Code</button>
+                <button onclick="startEditing()" class="bg-green-600 px-4 py-2 rounded">New Tier List</button>
+            </div>
+        </div>
+        <div id="tierListArea" class="hidden grid grid-cols-6 gap-4">
+            </div>
+        <div id="codeButtons" class="hidden mt-6 text-center">
+            <button onclick="generateCode()" class="bg-yellow-500 text-black font-bold px-4 py-2 rounded">Copy Tier Code</button>
+            <button onclick="generateCode()" class="bg-green-500 text-white ml-4 font-bold px-4 py-2 rounded">Complete & Generate Code</button>
+        </div>
+    </div>
+
+    <script>
+        const TIERS = [
+            { name: "S", color: "bg-red-500" },
+            { name: "A", color: "bg-orange-500" },
+            { name: "B", color: "bg-yellow-500" },
+            { name: "C", color: "bg-green-500" },
+            { name: "D", color: "bg-blue-500" },
+            { name: "F", color: "bg-purple-500" },
+        ];
+
+        let tierList = {};
+        let flavors = [];
+        let isEditing = false;
+
+        async function fetchFlavors() {
+            try {
+                const response = await fetch("/api/flavors"); // Replace with your actual API endpoint
+                flavors = await response.json();
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Failed to load flavors!' });
+            }
+        }
+
+        async function loadFromCode() {
+            const inputCode = document.getElementById("inputCode").value;
+            if (!inputCode) {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter a valid code' });
+                return;
+            }
+
+            tierList = TIERS.reduce((acc, tier) => {
+                acc[tier.name] = [];
+                return acc;
+            }, {});
+
+            inputCode.split(",").forEach(entry => {
+                const [item, tier] = entry.split(":");
+                if (TIERS.some(t => t.name === tier) && flavors.includes(item)) {
+                    tierList[tier].push(item);
+                }
+            });
+
+            isEditing = true;
+            renderTierList();
+            Swal.fire('Tier list loaded!');
+        }
+
+        function startEditing() {
+            isEditing = true;
+            tierList = TIERS.reduce((acc, tier) => {
+                acc[tier.name] = [];
+                return acc;
+            }, {});
+            renderTierList();
+        }
+
+        function generateCode() {
+            const serialized = Object.entries(tierList)
+                .map(([tier, items]) => items.map(item => `<span class="math-inline">\{item\}\:</span>{tier}`))
+                .flat()
+                .join(",");
+
+            const hash = crc32.str(serialized).toString(16).toUpperCase().padStart(8, "0");
+            const shortCode = `<span class="math-inline">\{hash\.slice\(0, 4\)\}\-</span>{hash.slice(4, 8)}`;
+
+            navigator.clipboard.writeText(`/tier-update ${shortCode}`);
+            Swal.fire('Tier list code copied! Paste in Discord.');
+        }
+
+        function renderTierList() {
+            const tierListArea = document.getElementById("tierListArea");
+            const codeButtons = document.getElementById("codeButtons");
+            tierListArea.innerHTML = "";
+
+            if (isEditing) {
+                tierListArea.classList.remove("hidden");
+                codeButtons.classList.remove("hidden");
+                TIERS.forEach(({ name, color }) => {
+                    const column = document.createElement("div");
+                    column.className = `tier-column ${color}`;
+                    column.innerHTML = `<h2 class="text-xl font-semibold mb-2">${name}</h2>`;
+                    tierList[name].forEach(item => {
+                        const itemDiv = document.createElement("div");
+                        itemDiv.className = "tier-item";
+                        itemDiv.textContent = item;
+                        itemDiv.dataset.tier = name;
+                        column.appendChild(itemDiv);
+                    });
+                    tierListArea.appendChild(column);
+                });
+                setupDragAndDrop();
+            } else {
+                tierListArea.classList.add("hidden");
+                codeButtons.classList.add("hidden");
+            }
+        }
+
+        function setupDragAndDrop() {
+            interact(".tier-item").draggable({
+                listeners: {
+                    move: dragMoveListener,
+                    end: dragEndListener
+                }
+            });
+        }
+
+        function dragMoveListener(event) {
+            const target = event.target;
+            const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+            const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+            target.style.transform = `translate(${x}px, ${y}px)`;
+            target.setAttribute("data-x", x);
+            target.setAttribute("data-y", y);
+        }
+
+        function dragEndListener(event) {
+            const target = event.target;
+            target.style.transform = "translate(0px, 0px)";
+            target.setAttribute("data-x", 0);
+            target.setAttribute("data-y", 0);
+
+            let closestTier = null;
+            let closestDistance = Infinity;
+            const targetRect = target.getBoundingClientRect();
+
+            document.querySelectorAll(".tier-column").forEach(column => {
+                const columnRect = column.getBoundingClientRect();
+                const distance = Math.sqrt(Math.pow(targetRect.x - columnRect.x, 2) + Math.pow(targetRect.y - columnRect.y, 2));
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestTier = column;
+                }
+            });
+
+            if (closestTier) {
+                const oldTier = target.dataset.tier;
+                const newTier = closestTier.querySelector("h2").textContent;
+
+                const itemName = target.textContent;
+                tierList[oldTier] = tierList[oldTier].filter(item => item !== itemName);
+                tierList[newTier].push(itemName);
+                target.dataset.tier = newTier;
+                renderTierList();
+            }
+        }
+
+        fetchFlavors();
+    </
