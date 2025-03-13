@@ -43,6 +43,8 @@
       gap: 0.5rem;
       background-color: #2d3748;
       transition: background-color 0.2s;
+      position: relative;
+      /* Add position context */
     }
 
     .tier.drop-target {
@@ -59,6 +61,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      /* Add position context */
     }
 
     .tier-item img {
@@ -76,6 +80,8 @@
       border-radius: 0.375rem;
       background-color: #1a202c;
       justify-content: center;
+      position: relative;
+      /* Add position context */
     }
 
     .pool-item {
@@ -88,6 +94,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      /* Add position context */
     }
 
     .pool-item img {
@@ -116,10 +124,12 @@
       color: #a0aec0;
     }
 
-    /* Add this CSS class for dragged items */
+    /* Improved dragging class with higher z-index but maintaining positioning */
     .dragging {
       z-index: 1000 !important;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+      opacity: 0.9;
+      /* Slight transparency to help visually distinguish */
     }
   </style>
 </head>
@@ -382,7 +392,7 @@
     }
 
     function setupDragAndDrop() {
-      // Make items draggable
+      // Make items draggable with z-index adjustment
       interact(".pool-item, .tier-item").draggable({
         inertia: true,
         modifiers: [
@@ -396,6 +406,14 @@
           start: function (event) {
             // Add dragging class when drag starts
             event.target.classList.add('dragging');
+
+            // Ensure the element being dragged has the highest z-index
+            // This is important for items that have already been moved once
+            const allItems = document.querySelectorAll('.pool-item, .tier-item');
+            allItems.forEach(item => {
+              item.style.zIndex = '1';
+            });
+            event.target.style.zIndex = '1000';
           },
           move: dragMoveListener,
           end: function (event) {
@@ -453,6 +471,9 @@
           itemElement.setAttribute('data-x', 0);
           itemElement.setAttribute('data-y', 0);
 
+          // 4. Reset z-index to normal after drop
+          itemElement.style.zIndex = '1';
+
           event.target.classList.remove('drop-target');
         },
         ondropdeactivate: function (event) {
@@ -494,6 +515,9 @@
           itemElement.style.transform = 'translate(0px, 0px)';
           itemElement.setAttribute('data-x', 0);
           itemElement.setAttribute('data-y', 0);
+
+          // 4. Reset z-index to normal after drop
+          itemElement.style.zIndex = '1';
 
           event.target.classList.remove('drop-target');
         },
