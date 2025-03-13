@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>G-Fuel Tier List</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.8/lib/draggable.bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.0/crc32.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -42,11 +42,12 @@
       position: relative;
     }
 
-    .tier.drop-target {
+    .tier.drop-active {
       background-color: #4a5568;
     }
 
-    .tier-item {
+    .tier-item,
+    .pool-item {
       background-color: #2d3748;
       padding: 0.5rem;
       border-radius: 0.375rem;
@@ -57,9 +58,11 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      touch-action: none;
     }
 
-    .tier-item img {
+    .tier-item img,
+    .pool-item img {
       max-width: 100%;
       max-height: 100%;
       border-radius: 0.375rem;
@@ -75,25 +78,6 @@
       background-color: #1a202c;
       justify-content: center;
       position: relative;
-    }
-
-    .pool-item {
-      background-color: #2d3748;
-      padding: 0.5rem;
-      border-radius: 0.375rem;
-      cursor: grab;
-      width: 100px;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .pool-item img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 0.375rem;
     }
 
     .header {
@@ -116,10 +100,20 @@
       color: #a0aec0;
     }
 
-    .dragging {
-      z-index: 1000 !important;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+    .draggable-mirror {
+      z-index: 9999;
       opacity: 0.9;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      position: fixed;
+    }
+
+    .draggable-source--is-dragging {
+      opacity: 0.3;
+    }
+
+    .draggable-container--over {
+      background-color: rgba(74, 85, 104, 0.5);
     }
   </style>
 </head>
@@ -171,6 +165,7 @@
     let tierList = {};
     let flavors = [];
     let isEditing = false;
+    let draggableInstance = null;
 
     // Load flavor data, set up empty tier list, then render
     async function fetchFlavors() {
@@ -295,6 +290,12 @@
       const backButton = document.getElementById("backButton");
       const header = document.getElementById("header");
 
+      // Destroy existing Draggable instance if it exists
+      if (draggableInstance) {
+        draggableInstance.destroy();
+        draggableInstance = null;
+      }
+
       tierContainer.innerHTML = "";
       poolArea.innerHTML = "";
 
@@ -348,7 +349,8 @@
             poolArea.appendChild(itemDiv);
           }
         });
-        setupDragAndDrop();
+
+        setupDraggable();
       } else {
         tierContainer.classList.add("hidden");
         poolArea.classList.add("hidden");
@@ -359,118 +361,86 @@
       }
     }
 
-    // Set up drag-and-drop functionality using Interact.js
-    function setupDragAndDrop() {
-      interact(".pool-item, .tier-item").draggable({
-        inertia: true,
-        modifiers: [
-          interact.modifiers.restrictRect({
-            restriction: 'body',
-            endOnly: true
-          })
-        ],
-        autoScroll: true,
-        listeners: {
-          start: function (event) {
-            event.target.classList.add('dragging');
-            const allItems = document.querySelectorAll('.pool-item, .tier-item');
-            allItems.forEach(item => {
-              item.style.zIndex = '1';
-            });
-            event.target.style.zIndex = '1000';
-          },
-          move: dragMoveListener,
-          end: function (event) {
-            event.target.classList.remove('dragging');
-            const target = event.target;
-            target.style.transform = "translate(0px, 0px)";
-            target.setAttribute("data-x", 0);
-            target.setAttribute("data-y", 0);
-          }
-        }
+    // Set up Shopify Draggable
+    function setupDraggable() {
+      // Define all containers that will participate in drag/drop operations
+      const containers = [
+        ...document.querySelectorAll('.tier'),
+        document.querySelector('.pool')
+      ];
+
+      // Initialize Draggable
+      draggableInstance = new Draggable.Sortable(containers, {
+        draggable: '.tier-item, .pool-item',
+        mirror: {
+          appendTo: 'body',
+          constrainDimensions: true
+        },
+        plugins: [Draggable.Plugins.ResizeMirror]
       });
 
-      interact(".tier").dropzone({
-        accept: ".pool-item, .tier-item",
-        overlap: 0.5,
-        ondragenter: function (event) {
-          event.target.classList.add('drop-target');
-        },
-        ondragleave: function (event) {
-          event.target.classList.remove('drop-target');
-        },
-        ondrop: function (event) {
-          const tierElement = event.target;
-          const itemElement = event.relatedTarget;
-          const tierName = tierElement.dataset.tier;
-          const itemName = itemElement.dataset.name;
-
-          // Remove from all tiers
-          Object.keys(tierList).forEach(tier => {
-            tierList[tier] = tierList[tier].filter(name => name !== itemName);
-          });
-          // Add to the current tier
-          tierList[tierName].push(itemName);
-
-          // Convert pool-item to tier-item as needed and re-append
-          if (itemElement.classList.contains('pool-item')) {
-            itemElement.classList.remove('pool-item');
-            itemElement.classList.add('tier-item');
-          }
-          tierElement.appendChild(itemElement);
-
-          itemElement.style.transform = 'translate(0px, 0px)';
-          itemElement.setAttribute('data-x', 0);
-          itemElement.setAttribute('data-y', 0);
-          itemElement.style.zIndex = '1';
-          event.target.classList.remove('drop-target');
-        },
-        ondropdeactivate: function (event) {
-          event.target.classList.remove('drop-target');
-        }
+      // Handle drag start
+      draggableInstance.on('drag:start', (event) => {
+        document.body.style.cursor = 'grabbing';
       });
 
-      interact(".pool").dropzone({
-        accept: ".tier-item",
-        overlap: 0.5,
-        ondragenter: function (event) {
-          event.target.classList.add('drop-target');
-        },
-        ondragleave: function (event) {
-          event.target.classList.remove('drop-target');
-        },
-        ondrop: function (event) {
-          const itemElement = event.relatedTarget;
-          const itemName = itemElement.dataset.name;
+      // Handle drag stop
+      draggableInstance.on('drag:stop', (event) => {
+        document.body.style.cursor = '';
+      });
 
-          // Remove from all tiers and convert back to pool-item, then re-append
-          Object.keys(tierList).forEach(tier => {
-            tierList[tier] = tierList[tier].filter(name => name !== itemName);
-          });
-          itemElement.classList.remove('tier-item');
-          itemElement.classList.add('pool-item');
-          event.target.appendChild(itemElement);
+      // Handle sorting between containers
+      draggableInstance.on('sortable:sorted', (event) => {
+        updateTierList();
+      });
 
-          itemElement.style.transform = 'translate(0px, 0px)';
-          itemElement.setAttribute('data-x', 0);
-          itemElement.setAttribute('data-y', 0);
-          itemElement.style.zIndex = '1';
-          event.target.classList.remove('drop-target');
-        },
-        ondropdeactivate: function (event) {
-          event.target.classList.remove('drop-target');
-        }
+      // Update class when dragging over container
+      draggableInstance.on('sortable:over', (event) => {
+        event.overContainer.classList.add('drop-active');
+      });
+
+      // Remove class when dragging out of container
+      draggableInstance.on('sortable:out', (event) => {
+        event.overContainer.classList.remove('drop-active');
+      });
+
+      // Make sure items maintain correct class based on their container
+      draggableInstance.on('sortable:stop', (event) => {
+        const allContainers = document.querySelectorAll('.tier, .pool');
+        allContainers.forEach(container => {
+          container.classList.remove('drop-active');
+        });
+
+        // Update classes based on container
+        const poolItems = document.querySelectorAll('.pool .tier-item');
+        poolItems.forEach(item => {
+          item.classList.remove('tier-item');
+          item.classList.add('pool-item');
+        });
+
+        const tierItems = document.querySelectorAll('.tier .pool-item');
+        tierItems.forEach(item => {
+          item.classList.remove('pool-item');
+          item.classList.add('tier-item');
+        });
       });
     }
 
-    // Keep track of how much we've moved an item while dragging
-    function dragMoveListener(event) {
-      const target = event.target;
-      const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
-      const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
-      target.style.transform = `translate(${x}px, ${y}px)`;
-      target.setAttribute("data-x", x);
-      target.setAttribute("data-y", y);
+    // Update the tierList object based on current DOM arrangement
+    function updateTierList() {
+      // Reset the tierList
+      TIERS.forEach(tier => {
+        tierList[tier.name] = [];
+      });
+
+      // Update it based on the current DOM arrangement
+      TIERS.forEach(tier => {
+        const tierElement = document.querySelector(`.tier[data-tier="${tier.name}"]`);
+        const items = tierElement.querySelectorAll('.tier-item, .pool-item');
+        items.forEach(item => {
+          tierList[tier.name].push(item.dataset.name);
+        });
+      });
     }
 
     // Go back to initial screen
