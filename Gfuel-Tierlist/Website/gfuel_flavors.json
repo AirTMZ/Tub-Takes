@@ -1,0 +1,237 @@
+[
+    {
+        "name": "Awakening",
+        "image": "Awakening.jpg",
+        "image_id": "1732163244"
+    },
+    {
+        "name": "Bahama Mama",
+        "image": "Bahama_Mama.jpg",
+        "image_id": "1736346070"
+    },
+    {
+        "name": "Berry Bomb",
+        "image": "Berry_Bomb.jpg",
+        "image_id": "1667316127"
+    },
+    {
+        "name": "Blue Ice",
+        "image": "Blue_Ice.jpg",
+        "image_id": "1715376483"
+    },
+    {
+        "name": "Cadenza",
+        "image": "Cadenza.jpg",
+        "image_id": "1707768427"
+    },
+    {
+        "name": "Caramel Apple",
+        "image": "Caramel_Apple.jpg",
+        "image_id": "1695101123"
+    },
+    {
+        "name": "CLICKBAIT",
+        "image": "CLICKBAIT.jpg",
+        "image_id": "1660320435"
+    },
+    {
+        "name": "Demon Ink",
+        "image": "Demon_Ink.jpg",
+        "image_id": "1736390452"
+    },
+    {
+        "name": "Dream Demon",
+        "image": "Dream_Demon.jpg",
+        "image_id": "1695418540"
+    },
+    {
+        "name": "Drop Sh𖦏t Citrus",
+        "image": "Drop_Sh𖦏t_Citrus.jpg",
+        "image_id": "1735862334"
+    },
+    {
+        "name": "Full Release",
+        "image": "Full_Release.jpg",
+        "image_id": "1712613054"
+    },
+    {
+        "name": "Hack 'N' Slash",
+        "image": "Hack_'N'_Slash.jpg",
+        "image_id": "1695652739"
+    },
+    {
+        "name": "Heaven Mini Tub",
+        "image": "Heaven_Mini_Tub.jpg",
+        "image_id": "1724276309"
+    },
+    {
+        "name": "Hell Mini Tub",
+        "image": "Hell_Mini_Tub.jpg",
+        "image_id": "1724276330"
+    },
+    {
+        "name": "Hidden Blade",
+        "image": "Hidden_Blade.jpg",
+        "image_id": "1727402227"
+    },
+    {
+        "name": "HYPE SAUCE",
+        "image": "HYPE_SAUCE.jpg",
+        "image_id": "1705691117"
+    },
+    {
+        "name": "Immuno-Fluid",
+        "image": "Immuno-Fluid.jpg",
+        "image_id": "1681739425"
+    },
+    {
+        "name": "Isaac's Tears",
+        "image": "Isaac's_Tears.jpg",
+        "image_id": "1664906601"
+    },
+    {
+        "name": "Jynxzi's Juice",
+        "image": "Jynxzi's_Juice.jpg",
+        "image_id": "1718655342"
+    },
+    {
+        "name": "Kiwi Strawberry",
+        "image": "Kiwi_Strawberry.jpg",
+        "image_id": "1738083114"
+    },
+    {
+        "name": "Mango Lemonade",
+        "image": "Mango_Lemonade.jpg",
+        "image_id": "1666215067"
+    },
+    {
+        "name": "Mega Man™ Blue Bomber Slushee",
+        "image": "Mega_Man™_Blue_Bomber_Slushee.jpg",
+        "image_id": "1660319983"
+    },
+    {
+        "name": "Miami Nights",
+        "image": "Miami_Nights.jpg",
+        "image_id": "1710297383"
+    },
+    {
+        "name": "Nemesis Tea",
+        "image": "Nemesis_Tea.jpg",
+        "image_id": "1738950426"
+    },
+    {
+        "name": "Nuka Cola",
+        "image": "Nuka_Cola.jpg",
+        "image_id": "1741126072"
+    },
+    {
+        "name": "PewDiePie",
+        "image": "PewDiePie.jpg",
+        "image_id": "1723075587"
+    },
+    {
+        "name": "PewDiePie's Yuzu Slash",
+        "image": "PewDiePie's_Yuzu_Slash.jpg",
+        "image_id": "1729037052"
+    },
+    {
+        "name": "Playtime Cooler",
+        "image": "Playtime_Cooler.jpg",
+        "image_id": "1732163085"
+    },
+    {
+        "name": "Ragin' Gummy Fish Remastered",
+        "image": "Ragin'_Gummy_Fish_Remastered.jpg",
+        "image_id": "1704325847"
+    },
+    {
+        "name": "Rainbow Sherbet",
+        "image": "Rainbow_Sherbet.jpg",
+        "image_id": "1712710248"
+    },
+    {
+        "name": "Rubik's Twist",
+        "image": "Rubik's_Twist.jpg",
+        "image_id": "1724276354"
+    },
+    {
+        "name": "Shiny Splash Remastered",
+        "image": "Shiny_Splash_Remastered.jpg",
+        "image_id": "1672780315"
+    },
+    {
+        "name": "Snow Cone",
+        "image": "Snow_Cone.jpg",
+        "image_id": "1723075654"
+    },
+    {
+        "name": "Sonic’s Peach Rings",
+        "image": "Sonic’s_Peach_Rings.jpg",
+        "image_id": "1660320704"
+    },
+    {
+        "name": "Sour Blue Chug Rug",
+        "image": "Sour_Blue_Chug_Rug.jpg",
+        "image_id": "1660320699"
+    },
+    {
+        "name": "Sour Fruit Punch",
+        "image": "Sour_Fruit_Punch.jpg",
+        "image_id": "1709054178"
+    },
+    {
+        "name": "Spiced Orange",
+        "image": "Spiced_Orange.jpg",
+        "image_id": "1699493047"
+    },
+    {
+        "name": "Spyro's Dragon Fruit",
+        "image": "Spyro's_Dragon_Fruit.jpg",
+        "image_id": "1659861435"
+    },
+    {
+        "name": "Stab Stimulant",
+        "image": "Stab_Stimulant.jpg",
+        "image_id": "1719006613"
+    },
+    {
+        "name": "Strawberry GF",
+        "image": "Strawberry_GF.jpg",
+        "image_id": "1724276318"
+    },
+    {
+        "name": "Sukuna's Finger",
+        "image": "Sukuna's_Finger.jpg",
+        "image_id": "1724276178"
+    },
+    {
+        "name": "THE JUICE",
+        "image": "THE_JUICE.jpg",
+        "image_id": "1715054977"
+    },
+    {
+        "name": "Traveler's Ale",
+        "image": "Traveler's_Ale.jpg",
+        "image_id": "1685049001"
+    },
+    {
+        "name": "Watermelon",
+        "image": "Watermelon.jpg",
+        "image_id": "1719529787"
+    },
+    {
+        "name": "Watermelon Limeade",
+        "image": "Watermelon_Limeade.jpg",
+        "image_id": "1660335706"
+    },
+    {
+        "name": "Watermelon Mint Remastered",
+        "image": "Watermelon_Mint_Remastered.jpg",
+        "image_id": "1706029190"
+    },
+    {
+        "name": "Wumpa Fruit",
+        "image": "Wumpa_Fruit.jpg",
+        "image_id": "1660320283"
+    }
+]
