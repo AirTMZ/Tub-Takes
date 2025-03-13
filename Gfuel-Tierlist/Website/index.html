@@ -9,15 +9,14 @@
   <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.0/crc32.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     .tier-row {
       display: flex;
       align-items: center;
       margin-bottom: 0.5rem;
       overflow-x: auto;
-      /* Add horizontal scrolling if needed */
       padding-bottom: 10px;
-      /* Space for scrollbar */
     }
 
     .label-holder {
@@ -27,13 +26,11 @@
       border-radius: 0.375rem;
       margin-right: 0.5rem;
       flex-shrink: 0;
-      /* Prevent label from shrinking */
     }
 
     .tier {
       flex: 1;
       min-height: 100px;
-      /* Set a larger minimum width */
       border: 1px solid #4a5568;
       border-radius: 0.375rem;
       padding: 0.5rem;
@@ -43,7 +40,6 @@
       background-color: #2d3748;
       transition: background-color 0.2s;
       position: relative;
-      /* Add position context */
     }
 
     .tier.drop-target {
@@ -61,7 +57,6 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      /* Add position context */
     }
 
     .tier-item img {
@@ -80,7 +75,6 @@
       background-color: #1a202c;
       justify-content: center;
       position: relative;
-      /* Add position context */
     }
 
     .pool-item {
@@ -94,7 +88,6 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      /* Add position context */
     }
 
     .pool-item img {
@@ -123,12 +116,10 @@
       color: #a0aec0;
     }
 
-    /* Improved dragging class with higher z-index but maintaining positioning */
     .dragging {
       z-index: 1000 !important;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
       opacity: 0.9;
-      /* Slight transparency to help visually distinguish */
     }
   </style>
 </head>
@@ -136,12 +127,15 @@
 <body class="bg-gray-900 text-white min-h-screen">
   <div class="p-6 max-w-4xl mx-auto">
     <div id="header" class="header">
+      <!-- Back button to return from editing state -->
       <button id="backButton" onclick="goBack()" class="hidden bg-red-600 px-4 py-2 rounded">Back</button>
       <div class="text-center">
         <h1 class="text-4xl font-extrabold">G-Fuel Tier List</h1>
         <p>Only rank the flavors you've tried.</p>
       </div>
     </div>
+
+    <!-- Initial input for loading or starting a new tier list -->
     <div id="initialControls" class="mb-4 flex flex-col items-center">
       <input type="text" placeholder="Enter tier list code" id="inputCode"
         class="border p-2 w-80 mb-2 bg-gray-800 text-white text-center">
@@ -150,16 +144,21 @@
         <button onclick="startEditing()" class="bg-green-600 px-4 py-2 rounded">New Tier List</button>
       </div>
     </div>
-    <div id="tierContainer" class="hidden mb-4">
-    </div>
+
+    <!-- Main container for displaying tiers -->
+    <div id="tierContainer" class="hidden mb-4"></div>
+    <!-- Pool area for unassigned flavors -->
     <div id="poolArea" class="pool hidden"></div>
+    <!-- Buttons for generating the code after editing -->
     <div id="codeButtons" class="hidden mt-6 text-center">
-      <button onclick="generateCode()" class="bg-green-600 text-white font-bold px-4 py-2 rounded">Save and Generate
-        Code</button>
+      <button onclick="generateCode()" class="bg-green-600 text-white font-bold px-4 py-2 rounded">
+        Save and Generate Code
+      </button>
     </div>
   </div>
 
   <script>
+    // All defined tiers and their associated colors
     const TIERS = [
       { name: "S", color: "rgb(255, 127, 127)" },
       { name: "A", color: "rgb(255, 191, 127)" },
@@ -173,15 +172,14 @@
     let flavors = [];
     let isEditing = false;
 
+    // Load flavor data, set up empty tier list, then render
     async function fetchFlavors() {
       try {
-        // For testing purposes, if we can't load from JSON, we'll use dummy data
         const response = await fetch("gfuel_flavors.json");
         flavors = await response.json();
         console.log("Flavors loaded:", flavors);
       } catch (error) {
         console.log("Failed to load flavors, using dummy data");
-        // Dummy data in case the JSON fails to load
         flavors = [
           { name: "Blue Ice", image: "https://via.placeholder.com/100?text=Blue+Ice" },
           { name: "Tropical Rain", image: "https://via.placeholder.com/100?text=Tropical+Rain" },
@@ -191,65 +189,46 @@
           { name: "Rainbow Sherbet", image: "https://via.placeholder.com/100?text=Rainbow" }
         ];
       }
-
-      // Initialize tierList object
       tierList = TIERS.reduce((acc, tier) => {
         acc[tier.name] = [];
         return acc;
       }, {});
-
-      // Start with the initial menu (no auto-editing)
       renderTierList();
     }
 
+    // Load a previously saved tier list from a code
     async function loadFromCode() {
       const inputCode = document.getElementById("inputCode").value;
       if (!inputCode) {
         Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter a valid code' });
         return;
       }
-
-      // Reset tierList
       tierList = TIERS.reduce((acc, tier) => {
         acc[tier.name] = [];
         return acc;
       }, {});
-
       try {
-        // Decode the input code
         const compactCode = atob(inputCode);
-
-        // Build a mapping of IDs to flavor names
         const idFlavorMap = {};
         flavors.forEach(flavor => {
           if (flavor.image_id) {
             idFlavorMap[flavor.image_id] = flavor.name;
           }
         });
-
-        // Define a regex to match tier letters followed by image IDs
         const tierRegex = /([SABCDF])(\d+)/g;
         let match;
-
-        // Process all matches
         while ((match = tierRegex.exec(compactCode)) !== null) {
-          const tier = match[1]; // The tier letter (S, A, B, etc.)
-          const idsChunk = match[2]; // The string of image IDs
-
-          // Process all IDs in this chunk
-          // Assuming all IDs are the same length (adjust if needed)
-          const idLength = 10; // Set this to the actual length of your image IDs
-
+          const tier = match[1];
+          const idsChunk = match[2];
+          const idLength = 10;
           for (let i = 0; i < idsChunk.length; i += idLength) {
             const id = idsChunk.substr(i, idLength);
             const flavorName = idFlavorMap[id];
-
             if (flavorName && TIERS.some(t => t.name === tier)) {
               tierList[tier].push(flavorName);
             }
           }
         }
-
         isEditing = true;
         renderTierList();
         Swal.fire('Tier list loaded!');
@@ -263,6 +242,7 @@
       }
     }
 
+    // Create a new empty tier list for editing
     function startEditing() {
       isEditing = true;
       tierList = TIERS.reduce((acc, tier) => {
@@ -272,40 +252,27 @@
       renderTierList();
     }
 
+    // Generate a shareable code for the current tier arrangement
     function generateCode() {
-      // Build a mapping of flavor names to IDs
       const flavorIdMap = {};
       flavors.forEach(flavor => {
         if (flavor.image_id) {
           flavorIdMap[flavor.name] = flavor.image_id;
         }
       });
-
-      // Generate code in format S{id1}{id2}A{id3}...
       let compactCode = '';
-
-      // Process tiers in order from S to F
       for (const tier of TIERS) {
         const tierItems = tierList[tier.name] || [];
         if (tierItems.length > 0) {
-          // Add tier letter
           compactCode += tier.name;
-
-          // Add all image IDs for this tier
           tierItems.forEach(item => {
             const id = flavorIdMap[item];
             if (id) compactCode += id;
           });
         }
       }
-
-      // Encode the code to make it URL-friendly and shorter
       const encodedCode = btoa(compactCode);
-
-      // Copy the encoded code to clipboard
       navigator.clipboard.writeText(encodedCode);
-
-      // Show success message with the generated code
       Swal.fire({
         icon: 'success',
         title: 'Tier List Saved!',
@@ -319,6 +286,7 @@
       });
     }
 
+    // Render the tiers and pool, toggling editing state
     function renderTierList() {
       const tierContainer = document.getElementById("tierContainer");
       const poolArea = document.getElementById("poolArea");
@@ -338,21 +306,23 @@
         backButton.classList.remove("hidden");
         header.classList.add("with-back-button");
 
-        // Create tier rows
+        // Create a row for each tier
         TIERS.forEach(({ name, color }) => {
           const row = document.createElement("div");
           row.className = "tier-row";
           row.innerHTML = `
-            <div class="label-holder" style="background-color: ${color};"><span class="label">${name}</span></div>
+            <div class="label-holder" style="background-color: ${color};">
+              <span class="label">${name}</span>
+            </div>
             <div class="tier" data-tier="${name}"></div>
           `;
           tierContainer.appendChild(row);
         });
 
-        // Create pool items and populate tiers with items in their correct order
+        // Keep track of used flavors so we know what should remain in the pool
         const usedFlavors = new Set();
 
-        // First, place items that are in tiers (maintaining their order)
+        // Add existing sorted flavors to their tiers
         for (const tier in tierList) {
           const tierEl = document.querySelector(`.tier[data-tier="${tier}"]`);
           tierList[tier].forEach(flavorName => {
@@ -368,7 +338,7 @@
           });
         }
 
-        // Then, add remaining flavors to the pool
+        // Anything unused stays in the pool
         flavors.forEach(flavor => {
           if (!usedFlavors.has(flavor.name)) {
             const itemDiv = document.createElement("div");
@@ -378,7 +348,6 @@
             poolArea.appendChild(itemDiv);
           }
         });
-
         setupDragAndDrop();
       } else {
         tierContainer.classList.add("hidden");
@@ -390,8 +359,8 @@
       }
     }
 
+    // Set up drag-and-drop functionality using Interact.js
     function setupDragAndDrop() {
-      // Make items draggable with z-index adjustment
       interact(".pool-item, .tier-item").draggable({
         inertia: true,
         modifiers: [
@@ -403,11 +372,7 @@
         autoScroll: true,
         listeners: {
           start: function (event) {
-            // Add dragging class when drag starts
             event.target.classList.add('dragging');
-
-            // Ensure the element being dragged has the highest z-index
-            // This is important for items that have already been moved once
             const allItems = document.querySelectorAll('.pool-item, .tier-item');
             allItems.forEach(item => {
               item.style.zIndex = '1';
@@ -416,10 +381,7 @@
           },
           move: dragMoveListener,
           end: function (event) {
-            // Remove dragging class when drag ends
             event.target.classList.remove('dragging');
-
-            // Return to original position if not dropped in a dropzone
             const target = event.target;
             target.style.transform = "translate(0px, 0px)";
             target.setAttribute("data-x", 0);
@@ -428,7 +390,6 @@
         }
       });
 
-      // Set up dropzones
       interact(".tier").dropzone({
         accept: ".pool-item, .tier-item",
         overlap: 0.5,
@@ -439,40 +400,29 @@
           event.target.classList.remove('drop-target');
         },
         ondrop: function (event) {
-          // Handle the drop event
           const tierElement = event.target;
           const itemElement = event.relatedTarget;
           const tierName = tierElement.dataset.tier;
           const itemName = itemElement.dataset.name;
 
-          console.log(`Dropping ${itemName} into ${tierName} tier`);
-
-          // Update data model: Remove item from any existing tier
+          // Remove from all tiers
           Object.keys(tierList).forEach(tier => {
             tierList[tier] = tierList[tier].filter(name => name !== itemName);
           });
-
-          // Add item to new tier
+          // Add to the current tier
           tierList[tierName].push(itemName);
 
-          // Update UI
-          // 1. Convert pool-item to tier-item if needed
+          // Convert pool-item to tier-item as needed and re-append
           if (itemElement.classList.contains('pool-item')) {
             itemElement.classList.remove('pool-item');
             itemElement.classList.add('tier-item');
           }
-
-          // 2. Move the element to the new tier
           tierElement.appendChild(itemElement);
 
-          // 3. Reset the transform
           itemElement.style.transform = 'translate(0px, 0px)';
           itemElement.setAttribute('data-x', 0);
           itemElement.setAttribute('data-y', 0);
-
-          // 4. Reset z-index to normal after drop
           itemElement.style.zIndex = '1';
-
           event.target.classList.remove('drop-target');
         },
         ondropdeactivate: function (event) {
@@ -480,7 +430,6 @@
         }
       });
 
-      // Set up the pool as a dropzone to move items back
       interact(".pool").dropzone({
         accept: ".tier-item",
         overlap: 0.5,
@@ -491,33 +440,21 @@
           event.target.classList.remove('drop-target');
         },
         ondrop: function (event) {
-          // Handle dropping back to pool
           const itemElement = event.relatedTarget;
           const itemName = itemElement.dataset.name;
 
-          console.log(`Dropping ${itemName} back to pool`);
-
-          // Update data model: Remove item from all tiers
+          // Remove from all tiers and convert back to pool-item, then re-append
           Object.keys(tierList).forEach(tier => {
             tierList[tier] = tierList[tier].filter(name => name !== itemName);
           });
-
-          // Update UI
-          // 1. Convert tier-item to pool-item
           itemElement.classList.remove('tier-item');
           itemElement.classList.add('pool-item');
-
-          // 2. Move the element to the pool
           event.target.appendChild(itemElement);
 
-          // 3. Reset the transform
           itemElement.style.transform = 'translate(0px, 0px)';
           itemElement.setAttribute('data-x', 0);
           itemElement.setAttribute('data-y', 0);
-
-          // 4. Reset z-index to normal after drop
           itemElement.style.zIndex = '1';
-
           event.target.classList.remove('drop-target');
         },
         ondropdeactivate: function (event) {
@@ -526,22 +463,23 @@
       });
     }
 
+    // Keep track of how much we've moved an item while dragging
     function dragMoveListener(event) {
       const target = event.target;
       const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
       const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
-
       target.style.transform = `translate(${x}px, ${y}px)`;
       target.setAttribute("data-x", x);
       target.setAttribute("data-y", y);
     }
 
+    // Go back to initial screen
     function goBack() {
       isEditing = false;
       renderTierList();
     }
 
-    // Fetch flavors when the page loads
+    // Start by fetching flavors
     document.addEventListener("DOMContentLoaded", fetchFlavors);
   </script>
 </body>
