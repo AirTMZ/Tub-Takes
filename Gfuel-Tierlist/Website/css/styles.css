@@ -117,12 +117,20 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  position: relative;
   margin-bottom: 0.8rem;
 }
 
-.header.with-back-button {
-  justify-content: space-between;
+.header .text-center {
+  width: 100%;
+  /* Ensures the text container takes full width */
+}
+
+#backButton {
+  position: absolute;
+  left: 0;
+  z-index: 10;
+  /* Ensure button appears above other elements */
 }
 
 .header h1 {
