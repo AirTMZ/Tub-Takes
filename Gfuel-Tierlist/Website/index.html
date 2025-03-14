@@ -20,18 +20,20 @@
         <!-- Back button to return from editing state -->
         <button id="backButton" onclick="goBack()" class="hidden bg-red-600 px-4 py-2 rounded">Back</button>
         <div class="text-center">
-          <h1 class="text-4xl font-extrabold">r/G-Fuel Tier List</h1>
-          <p>Rank the flavors you've tried!</p>
+          <h1 class="text-5xl font-extrabold">r/G-Fuel Tier List</h1>
+          <p class="text-lg mt-2">Rank the flavors you've tried!</p>
         </div>
       </div>
 
       <!-- Initial input for loading or starting a new tier list -->
-      <div id="initialControls" class="mb-4 flex flex-col items-center">
+      <div id="initialControls" class="mb-4 flex flex-col items-center mt-6">
         <input type="text" placeholder="Enter tier list code" id="inputCode"
-          class="border p-2 w-80 mb-2 bg-gray-800 text-white text-center">
-        <div class="flex gap-4">
-          <button onclick="loadFromCode()" class="bg-blue-600 px-4 py-2 rounded">Load from Code</button>
-          <button onclick="startEditing()" class="bg-green-600 px-4 py-2 rounded">New Tier List</button>
+          class="border p-3 w-96 mb-3 bg-gray-800 text-white text-center text-lg">
+        <div class="flex gap-6">
+          <button onclick="loadFromCode()" class="bg-blue-600 px-6 py-3 rounded text-lg font-medium">Load from
+            Code</button>
+          <button onclick="startEditing()" class="bg-green-600 px-6 py-3 rounded text-lg font-medium">New Tier
+            List</button>
         </div>
       </div>
     </div>
