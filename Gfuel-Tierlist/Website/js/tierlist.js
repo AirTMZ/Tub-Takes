@@ -136,6 +136,7 @@ function renderTierList() {
   const initialView = document.getElementById("initialView");
   const backButton = document.getElementById("backButton");
   const header = document.getElementById("header");
+  const searchContainer = document.getElementById("searchContainer");
 
   // Destroy existing Draggable instance if it exists
   if (draggableInstance) {
@@ -149,6 +150,7 @@ function renderTierList() {
   if (isEditing) {
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
+    searchContainer.classList.remove("hidden");
     codeButtons.classList.remove("hidden");
     initialControls.classList.add("hidden");
     backButton.classList.remove("hidden");
@@ -200,9 +202,11 @@ function renderTierList() {
     });
 
     setupDraggable();
+    setupSearch();
   } else {
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
+    searchContainer.classList.add("hidden");
     codeButtons.classList.add("hidden");
     initialControls.classList.remove("hidden");
     backButton.classList.add("hidden");
@@ -210,6 +214,60 @@ function renderTierList() {
     // Add back centering for initial view
     initialView.classList.add("flex-1", "flex", "flex-col", "justify-center");
   }
+}
+
+// Setup search functionality for pool items
+function setupSearch() {
+  const searchInput = document.getElementById("searchInput");
+
+  // Clear previous input
+  searchInput.value = "";
+
+  // Add event listener for search input
+  searchInput.addEventListener("input", function() {
+    const searchText = this.value.toLowerCase().replace(/\s+/g, '');
+
+    // If search is empty, show all items
+    if (searchText === '') {
+      document.querySelectorAll(".pool-item").forEach(item => {
+        item.style.display = "";
+      });
+      return;
+    }
+
+    // Get character frequency map for search text
+    const searchCharFreq = getCharacterFrequency(searchText);
+    const poolItems = document.querySelectorAll(".pool-item");
+
+    poolItems.forEach(item => {
+      const flavorName = item.dataset.name.toLowerCase().replace(/\s+/g, '');
+      const flavorCharFreq = getCharacterFrequency(flavorName);
+
+      // Check if flavor contains all characters from the search
+      let isMatch = true;
+      for (const [char, count] of Object.entries(searchCharFreq)) {
+        if (!flavorCharFreq[char] || flavorCharFreq[char] < count) {
+          isMatch = false;
+          break;
+        }
+      }
+
+      if (isMatch) {
+        item.style.display = ""; // Show item
+      } else {
+        item.style.display = "none"; // Hide item
+      }
+    });
+  });
+}
+
+// Helper function to count character frequencies
+function getCharacterFrequency(str) {
+  const charFreq = {};
+  for (const char of str) {
+    charFreq[char] = (charFreq[char] || 0) + 1;
+  }
+  return charFreq;
 }
 
 // Set up Shopify Draggable
