@@ -132,11 +132,8 @@
 
 #backButton {
   margin-right: 10px;
-  /* Add some space between back button and title */
-  position: absolute;
-  left: 0;
-  z-index: 10;
-  /* Ensure button appears above other elements */
+  position: relative;
+  z-index: auto;
 }
 
 #saveButton {
