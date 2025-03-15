@@ -23,6 +23,11 @@
           <h1 class="text-5xl font-extrabold">r/G-Fuel Tier List</h1>
           <p class="text-lg mt-2">Rank the flavors you've tried!</p>
         </div>
+        <!-- Add the save button to the header -->
+        <button id="saveButton" onclick="generateCode()"
+          class="hidden bg-green-600 text-white font-bold px-4 py-2 rounded">
+          Save
+        </button>
       </div>
 
       <!-- Initial input for loading or starting a new tier list -->
@@ -49,12 +54,6 @@
 
     <!-- Pool area for unassigned flavors -->
     <div id="poolArea" class="pool hidden"></div>
-    <!-- Buttons for generating the code after editing -->
-    <div id="codeButtons" class="hidden mt-6 text-center">
-      <button onclick="generateCode()" class="bg-green-600 text-white font-bold px-4 py-2 rounded">
-        Save and Generate Code
-      </button>
-    </div>
   </div>
 
   <script src="js/tierlist.js"></script>

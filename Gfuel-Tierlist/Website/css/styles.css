@@ -117,20 +117,31 @@
 .header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  /* Space items evenly */
   position: relative;
   margin-bottom: 0.8rem;
 }
 
 .header .text-center {
-  width: 100%;
-  /* Ensures the text container takes full width */
+  flex: 1;
+  /* Allow the center section to take remaining space */
+  text-align: center;
+  /* Keep text centered */
 }
 
 #backButton {
+  margin-right: 10px;
+  /* Add some space between back button and title */
   position: absolute;
   left: 0;
   z-index: 10;
   /* Ensure button appears above other elements */
+}
+
+#saveButton {
+  margin-left: 10px;
+  /* Add some space between title and save button */
 }
 
 .header h1 {

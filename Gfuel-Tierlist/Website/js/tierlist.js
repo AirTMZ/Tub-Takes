@@ -131,10 +131,10 @@ function generateCode() {
 function renderTierList() {
   const tierContainer = document.getElementById("tierContainer");
   const poolArea = document.getElementById("poolArea");
-  const codeButtons = document.getElementById("codeButtons");
   const initialControls = document.getElementById("initialControls");
   const initialView = document.getElementById("initialView");
   const backButton = document.getElementById("backButton");
+  const saveButton = document.getElementById("saveButton"); // Add this line
   const header = document.getElementById("header");
   const searchContainer = document.getElementById("searchContainer");
 
@@ -151,7 +151,7 @@ function renderTierList() {
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
     searchContainer.classList.remove("hidden");
-    codeButtons.classList.remove("hidden");
+    saveButton.classList.remove("hidden"); // Show save button
     initialControls.classList.add("hidden");
     backButton.classList.remove("hidden");
     header.classList.add("with-back-button");
@@ -207,7 +207,7 @@ function renderTierList() {
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
     searchContainer.classList.add("hidden");
-    codeButtons.classList.add("hidden");
+    saveButton.classList.add("hidden"); // Hide save button
     initialControls.classList.remove("hidden");
     backButton.classList.add("hidden");
     header.classList.remove("with-back-button");
