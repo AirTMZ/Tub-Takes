@@ -49,6 +49,12 @@ function checkURLforCode() {
   if (code) {
     loadTierListFromCode(code);
     console.log("Loaded tier list from URL code");
+
+    // Remove the code parameter and index.html from the URL without reloading the page
+    url.searchParams.delete("c");
+    const cleanPathname = url.pathname.replace(/\/index\.html$/, '/');
+    window.history.pushState({}, document.title, cleanPathname);
+
     return true;
   }
 
@@ -216,7 +222,7 @@ function generateCode() {
     }
   }
 
-  const encodedCode = btoa(compactCode);
+  let encodedCode = compactCode ? btoa(compactCode) : "new";
 
   // Generate the shareable URL
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
@@ -228,7 +234,7 @@ function generateCode() {
     title: 'Tier List Saved!',
     html: `<div class="text-center">
             <p>Your tier list code is:</p>
-            <p class="text-2xl font-bold mt-2 mb-4">${encodedCode}</p>
+            <p class="text-2xl font-bold mt-2 mb-4">${encodedCode === "new" ? "Empty" : encodedCode}</p>
             <p class="text-sm">Code has been copied to clipboard</p>
             <p class="mt-4">Share this link:</p>
             <p class="text-sm text-blue-500 break-all mt-2">${shareableUrl}</p>
