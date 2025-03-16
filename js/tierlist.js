@@ -195,6 +195,9 @@ function generateCode() {
     }
   });
 
+  // First, ensure tierList is up-to-date with the current DOM state
+  updateTierList();
+
   // Keep track of what's been encoded to prevent duplicates
   const encodedFlavors = new Set();
   let compactCode = '';
