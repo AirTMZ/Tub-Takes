@@ -44,17 +44,12 @@ async function fetchFlavors() {
 // Check if URL contains a code parameter and load it
 function checkURLforCode() {
   const url = new URL(window.location.href);
-  const path = url.pathname;
+  const code = url.searchParams.get("c");
 
-  // Check if URL contains "/c?="
-  if (path.includes("/c") && url.search.startsWith("?=")) {
-    // Extract code from the URL parameter
-    const code = url.search.substring(2); // Remove the "?=" part
-    if (code) {
-      loadTierListFromCode(code);
-      console.log("Loaded tier list from URL code");
-      return true;
-    }
+  if (code) {
+    loadTierListFromCode(code);
+    console.log("Loaded tier list from URL code");
+    return true;
   }
 
   return false;
