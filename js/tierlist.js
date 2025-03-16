@@ -1,4 +1,3 @@
-// Define tiers and their associated colors
 const TIERS = [
   { name: "S", color: "rgb(220, 53, 69)" },   // Darker red
   { name: "A", color: "rgb(253, 126, 20)" },  // Darker orange
@@ -254,6 +253,7 @@ function renderTierList() {
   poolArea.innerHTML = "";
 
   if (isEditing) {
+    document.body.classList.add("tierlist-visible"); // Add this line
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
     searchContainer.classList.remove("hidden");
@@ -305,6 +305,7 @@ function renderTierList() {
     setupDraggable();
     setupSearch();
   } else {
+    document.body.classList.remove("tierlist-visible"); // Add this line
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
     searchContainer.classList.add("hidden");
@@ -452,6 +453,34 @@ function logTierList() {
   for (const tier in tierList) {
     console.log(`${tier}: ${tierList[tier].join(', ')}`);
   }
+}
+
+// Show help instructions
+function showHelp() {
+  Swal.fire({
+    title: 'How to Use the G-Fuel Tier List',
+    html: `
+      <div class="text-left">
+        <h3 class="font-bold text-lg mb-2">What to do:</h3>
+        <ol class="list-decimal pl-6 space-y-2">
+          <li><strong>Complete your tierlist</strong> - Drag flavors from the pool into your preferred tiers</li>
+          <li><strong>Export the tierlist</strong> - Click the Save button when you're done to generate a code</li>
+          <li><strong>Save your list</strong> - Paste the generated command in Discord to update and save your tierlist</li>
+        </ol>
+        <div class="mt-4">
+          <p class="font-bold">To share your tierlist:</p>
+          <p>Use the link that appears after saving to share with others</p>
+        </div>
+        <div class="mt-4">
+          <p class="font-bold">To load an existing tierlist:</p>
+          <p>Enter your code on the main page and click "Load from Code"</p>
+        </div>
+      </div>
+    `,
+    confirmButtonText: 'Got it!',
+    confirmButtonColor: '#3085d6',
+    width: '600px'
+  });
 }
 
 // Start by fetching flavors

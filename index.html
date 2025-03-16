@@ -14,23 +14,19 @@
 
 <body class="bg-gray-900 text-white min-h-screen">
   <div class="p-6 max-w-4xl mx-auto min-h-screen flex flex-col">
-    <!-- Initial view container with vertical centering -->
     <div id="initialView" class="flex-1 flex flex-col justify-center items-center">
       <div id="header" class="header">
-        <!-- Back button to return from editing state -->
         <button id="backButton" onclick="goBack()" class="hidden bg-red-600 px-4 py-2 rounded">Back</button>
         <div class="text-center">
           <h1 class="text-5xl font-extrabold">r/G-Fuel Tier List</h1>
           <p class="text-lg mt-2">Rank the flavors you've tried!</p>
         </div>
-        <!-- Add the save button to the header -->
         <button id="saveButton" onclick="generateCode()"
           class="hidden bg-green-600 text-white font-bold px-4 py-2 rounded">
           Save
         </button>
       </div>
 
-      <!-- Initial input for loading or starting a new tier list -->
       <div id="initialControls" class="mb-4 flex flex-col items-center mt-6">
         <input type="text" placeholder="Enter tier list code" id="inputCode"
           class="border p-3 w-96 mb-3 bg-gray-800 text-white text-center text-lg">
@@ -43,22 +39,21 @@
       </div>
     </div>
 
-    <!-- Main container for displaying tiers -->
     <div id="tierContainer" class="hidden mb-4"></div>
 
-    <!-- Search bar for filtering pool items -->
     <div id="searchContainer" class="hidden mb-4 mt-4">
       <input type="text" id="searchInput" placeholder="Search flavors..."
         class="w-full bg-gray-800 border border-gray-700 rounded-full text-white text-center">
     </div>
 
-    <!-- Pool area for unassigned flavors -->
     <div id="poolArea" class="pool hidden"></div>
   </div>
 
   <div class="text-center mt-4">
     <span class="bg-black-500 text-white px-4 py-2 rounded">v1.0.3 © Timothy Mitchell</span>
   </div>
+
+  <button id="helpButton" onclick="showHelp()">?</button>
 
   <script src="js/tierlist.js"></script>
 </body>
