@@ -147,9 +147,9 @@ function generateCode() {
 
   // Generate the shareable URL
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
-  const shareableUrl = `${baseUrl}?c=${encodedCode}`;
+  const shareableUrl = `${baseUrl}/index.html?c=${encodedCode}`;
 
-  navigator.clipboard.writeText(shareableUrl);
+  navigator.clipboard.writeText(encodedCode);
   Swal.fire({
     icon: 'success',
     title: 'Tier List Saved!',
@@ -392,8 +392,8 @@ function updateTierList() {
 
 // Go back to initial screen
 function goBack() {
-  isEditing = false;
-  renderTierList();
+  const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
+  window.location.href = baseUrl;
 }
 
 // Start by fetching flavors
