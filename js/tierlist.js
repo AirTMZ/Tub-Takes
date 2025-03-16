@@ -214,17 +214,18 @@ function generateCode() {
   navigator.clipboard.writeText(encodedCode);
   Swal.fire({
     icon: 'success',
-    title: 'Tier List Saved!',
+    title: 'Almost Done!',
     html: `<div class="text-center">
-            <p>Your tier list code is:</p>
-            <p class="text-2xl font-bold mt-2 mb-4">${encodedCode === "new" ? "Empty" : encodedCode}</p>
-            <p class="text-sm">Code has been copied to clipboard</p>
-            <p class="mt-4">Share this link:</p>
+            <p>Your tier list has been successfully exported.</p>
+            <p>To save and submit it to the global rankings, use this command:</p>
+            <p class="text-2xl font-bold mt-2 mb-4 break-all">/tierlist update ${encodedCode === "new" ? "Empty" : encodedCode}</p>
+            <p class="text-sm">This command has been copied to your clipboard.</p>
+            <p class="mt-4">To share your tier list, use this link:</p>
             <p class="text-sm text-blue-500 break-all mt-2">${shareableUrl}</p>
           </div>`,
     confirmButtonText: 'OK',
     confirmButtonColor: '#10B981',
-  });
+});
 }
 
 // Render the tiers and pool, toggling editing state
