@@ -213,14 +213,20 @@ function generateCode() {
 
   navigator.clipboard.writeText(encodedCode);
   Swal.fire({
-    icon: 'success',
-    title: 'Almost Done!',
+    icon: encodedCode === "new" ? 'error' : 'success',
+    title: encodedCode === "new" ? 'Just a Minute!' : 'One More Step!',
     html: `<div class="text-center">
-            <p>Your tier list has been successfully exported.</p>
-            <p>To save and submit it to the global rankings, use this command:</p>
-            <p class="text-2xl font-bold mt-2 mb-4 break-all">/tierlist update ${encodedCode === "new" ? "Empty" : encodedCode}</p>
-            <p class="text-sm">This command has been copied to your clipboard.</p>
-            <p class="mt-4">To share your tier list, use this link:</p>
+            <p>${encodedCode === "new" ? "Your tier list cannot be exported." : "Your tier list has been successfully exported."}</p>
+            ${
+              encodedCode === "new"
+                ? `<p class="text-2xl font-bold mt-2 mb-4">No Tierlist!</p>
+                   <p class="text-red-500">Empty tierlists cannot be saved</p>
+                   <p class="mt-4">To share an empty list, use this link:</p>`
+                : `<p>To save and submit it to the global rankings, run:</p>
+                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/tierlist update ${encodedCode}</p>
+                   <p class="text-sm">This command has been copied to your clipboard.</p>
+                   <p class="mt-4">To show others your tier list, use this link:</p>`
+            }
             <p class="text-sm text-blue-500 break-all mt-2">${shareableUrl}</p>
           </div>`,
     confirmButtonText: 'OK',
