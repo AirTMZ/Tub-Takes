@@ -243,6 +243,7 @@ function renderTierList() {
   const saveButton = document.getElementById("saveButton");
   const header = document.getElementById("header");
   const searchContainer = document.getElementById("searchContainer");
+  const rankFlavorsText = document.querySelector(".rank-flavors-text");
 
   if (draggableInstance) {
     draggableInstance.destroy();
@@ -253,7 +254,7 @@ function renderTierList() {
   poolArea.innerHTML = "";
 
   if (isEditing) {
-    document.body.classList.add("tierlist-visible"); // Add this line
+    document.body.classList.add("tierlist-visible");
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
     searchContainer.classList.remove("hidden");
@@ -262,6 +263,7 @@ function renderTierList() {
     backButton.classList.remove("hidden");
     header.classList.add("with-back-button");
     initialView.classList.remove("flex-1", "flex", "flex-col", "justify-center");
+    rankFlavorsText.classList.remove("hidden");
 
     TIERS.forEach(({ name, color }) => {
       const row = document.createElement("div");
@@ -305,7 +307,7 @@ function renderTierList() {
     setupDraggable();
     setupSearch();
   } else {
-    document.body.classList.remove("tierlist-visible"); // Add this line
+    document.body.classList.remove("tierlist-visible");
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
     searchContainer.classList.add("hidden");
@@ -314,6 +316,7 @@ function renderTierList() {
     backButton.classList.add("hidden");
     header.classList.remove("with-back-button");
     initialView.classList.add("flex-1", "flex", "flex-col", "justify-center");
+    rankFlavorsText.classList.add("hidden");
   }
 }
 

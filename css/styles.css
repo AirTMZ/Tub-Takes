@@ -199,3 +199,7 @@
 body.tierlist-visible #helpButton {
   display: none;
 }
+
+.hidden {
+  display: none;
+}
