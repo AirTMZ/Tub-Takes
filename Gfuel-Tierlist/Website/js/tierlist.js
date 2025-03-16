@@ -67,18 +67,24 @@ async function loadFromCode() {
 
 // Common function to load tier list from code
 function loadTierListFromCode(inputCode) {
+  // Reset tierList to empty
   tierList = TIERS.reduce((acc, tier) => {
     acc[tier.name] = [];
     return acc;
   }, {});
+
   try {
     const compactCode = atob(inputCode);
+    console.log("Decoded code:", compactCode);
+
     const idFlavorMap = {};
     flavors.forEach(flavor => {
       if (flavor.image_id) {
         idFlavorMap[flavor.image_id] = flavor.name;
       }
     });
+    console.log("ID to Flavor Map:", idFlavorMap);
+
     const tierRegex = /([SABCDF])(\d+)/g;
     let match;
     while ((match = tierRegex.exec(compactCode)) !== null) {
@@ -89,7 +95,9 @@ function loadTierListFromCode(inputCode) {
         const id = idsChunk.substr(i, idLength);
         const flavorName = idFlavorMap[id];
         if (flavorName && TIERS.some(t => t.name === tier)) {
-          tierList[tier].push(flavorName);
+          if (!tierList[tier].includes(flavorName)) {
+            tierList[tier].push(flavorName);
+          }
         }
       }
     }
