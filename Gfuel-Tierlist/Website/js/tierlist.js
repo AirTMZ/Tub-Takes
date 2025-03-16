@@ -34,7 +34,29 @@ async function fetchFlavors() {
     acc[tier.name] = [];
     return acc;
   }, {});
+
+  // Check URL for code parameter
+  checkURLforCode();
+
   renderTierList();
+}
+
+// Check if URL contains a code parameter and load it
+function checkURLforCode() {
+  const url = new URL(window.location.href);
+  const path = url.pathname;
+
+  // Check if URL contains "/c?="
+  if (path.includes("/c") && url.search.startsWith("?=")) {
+    // Extract code from the URL parameter
+    const code = url.search.substring(2); // Remove the "?=" part
+    if (code) {
+      loadTierListFromCode(code);
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // Load a previously saved tier list from a code
@@ -44,6 +66,11 @@ async function loadFromCode() {
     Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter a valid code' });
     return;
   }
+  loadTierListFromCode(inputCode);
+}
+
+// Common function to load tier list from code
+function loadTierListFromCode(inputCode) {
   tierList = TIERS.reduce((acc, tier) => {
     acc[tier.name] = [];
     return acc;
@@ -113,6 +140,11 @@ function generateCode() {
     }
   }
   const encodedCode = btoa(compactCode);
+
+  // Generate the shareable URL
+  const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
+  const shareableUrl = `${baseUrl}/c?=${encodedCode}`;
+
   navigator.clipboard.writeText(encodedCode);
   Swal.fire({
     icon: 'success',
@@ -121,6 +153,8 @@ function generateCode() {
             <p>Your tier list code is:</p>
             <p class="text-2xl font-bold mt-2 mb-4">${encodedCode}</p>
             <p class="text-sm">Code has been copied to clipboard</p>
+            <p class="mt-4">Share this link:</p>
+            <p class="text-sm text-blue-500 break-all mt-2">${shareableUrl}</p>
           </div>`,
     confirmButtonText: 'OK',
     confirmButtonColor: '#10B981',
@@ -134,7 +168,7 @@ function renderTierList() {
   const initialControls = document.getElementById("initialControls");
   const initialView = document.getElementById("initialView");
   const backButton = document.getElementById("backButton");
-  const saveButton = document.getElementById("saveButton"); // Add this line
+  const saveButton = document.getElementById("saveButton");
   const header = document.getElementById("header");
   const searchContainer = document.getElementById("searchContainer");
 
@@ -151,7 +185,7 @@ function renderTierList() {
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
     searchContainer.classList.remove("hidden");
-    saveButton.classList.remove("hidden"); // Show save button
+    saveButton.classList.remove("hidden");
     initialControls.classList.add("hidden");
     backButton.classList.remove("hidden");
     header.classList.add("with-back-button");
@@ -207,7 +241,7 @@ function renderTierList() {
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
     searchContainer.classList.add("hidden");
-    saveButton.classList.add("hidden"); // Hide save button
+    saveButton.classList.add("hidden");
     initialControls.classList.remove("hidden");
     backButton.classList.add("hidden");
     header.classList.remove("with-back-button");
