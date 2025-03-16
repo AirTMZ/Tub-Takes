@@ -16,7 +16,7 @@ let draggableInstance = null;
 // Load flavor data, set up empty tier list, then render
 async function fetchFlavors() {
   try {
-    const response = await fetch("json/gfuel_flavors.json");
+    const response = await fetch("gfuel_flavors.json");
     flavors = await response.json();
     console.log("Flavors loaded:", flavors);
   } catch (error) {
