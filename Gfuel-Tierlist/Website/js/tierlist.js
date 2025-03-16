@@ -52,6 +52,7 @@ function checkURLforCode() {
     const code = url.search.substring(2); // Remove the "?=" part
     if (code) {
       loadTierListFromCode(code);
+      console.log("Loaded tier list from URL code");
       return true;
     }
   }
