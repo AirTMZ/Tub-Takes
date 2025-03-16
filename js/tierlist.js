@@ -77,6 +77,7 @@ function loadTierListFromCode(inputCode) {
     const compactCode = atob(inputCode);
     console.log("Decoded code:", compactCode);
 
+    // Create a map of image_id to flavor name
     const idFlavorMap = {};
     flavors.forEach(flavor => {
       if (flavor.image_id) {
@@ -85,22 +86,77 @@ function loadTierListFromCode(inputCode) {
     });
     console.log("ID to Flavor Map:", idFlavorMap);
 
-    const tierRegex = /([SABCDF])(\d+)/g;
-    let match;
-    while ((match = tierRegex.exec(compactCode)) !== null) {
-      const tier = match[1];
-      const idsChunk = match[2];
-      const idLength = 10;
-      for (let i = 0; i < idsChunk.length; i += idLength) {
-        const id = idsChunk.substr(i, idLength);
-        const flavorName = idFlavorMap[id];
-        if (flavorName && TIERS.some(t => t.name === tier)) {
-          if (!tierList[tier].includes(flavorName)) {
-            tierList[tier].push(flavorName);
+    // Keep track of processed flavors to avoid duplicates
+    const processedFlavors = new Set();
+
+    // Parse the compact code using a clearer approach
+    // Format is now: S1234567,7654321,T5432123,etc
+    let currentTier = null;
+    let currentId = "";
+    let parsingId = false;
+
+    for (let i = 0; i < compactCode.length; i++) {
+      const char = compactCode[i];
+
+      // Check if this is a tier identifier (S, A, B, C, D, F)
+      if (TIERS.some(t => t.name === char) && !parsingId) {
+        currentTier = char;
+        parsingId = true;
+        currentId = "";
+        continue;
+      }
+
+      // If we're parsing an ID and encounter a comma, we've reached the end of this ID
+      if (char === "," && parsingId) {
+        if (currentId && currentTier) {
+          const flavorName = idFlavorMap[currentId];
+          if (flavorName && !processedFlavors.has(flavorName)) {
+            if (TIERS.some(t => t.name === currentTier)) {
+              tierList[currentTier].push(flavorName);
+              processedFlavors.add(flavorName);
+            }
           }
+        }
+        currentId = "";
+        continue;
+      }
+
+      // If we're parsing an ID and encounter another tier identifier,
+      // finalize the current ID and start a new tier
+      if (TIERS.some(t => t.name === char) && parsingId) {
+        if (currentId && currentTier) {
+          const flavorName = idFlavorMap[currentId];
+          if (flavorName && !processedFlavors.has(flavorName)) {
+            if (TIERS.some(t => t.name === currentTier)) {
+              tierList[currentTier].push(flavorName);
+              processedFlavors.add(flavorName);
+            }
+          }
+        }
+        currentTier = char;
+        currentId = "";
+        continue;
+      }
+
+      // Otherwise, build up the current ID
+      if (parsingId) {
+        currentId += char;
+      }
+    }
+
+    // Handle the last ID if there is one
+    if (currentId && currentTier) {
+      const flavorName = idFlavorMap[currentId];
+      if (flavorName && !processedFlavors.has(flavorName)) {
+        if (TIERS.some(t => t.name === currentTier)) {
+          tierList[currentTier].push(flavorName);
+          processedFlavors.add(flavorName);
         }
       }
     }
+
+    console.log("Loaded tier list:", JSON.parse(JSON.stringify(tierList)));
+
     isEditing = true;
     renderTierList();
     Swal.fire('Tier list loaded!');
@@ -132,17 +188,34 @@ function generateCode() {
       flavorIdMap[flavor.name] = flavor.image_id;
     }
   });
+
+  // Keep track of what's been encoded to prevent duplicates
+  const encodedFlavors = new Set();
   let compactCode = '';
+
   for (const tier of TIERS) {
     const tierItems = tierList[tier.name] || [];
     if (tierItems.length > 0) {
-      compactCode += tier.name;
+      let tierCode = tier.name;
+      let tierHasValidItems = false;
+
       tierItems.forEach(item => {
         const id = flavorIdMap[item];
-        if (id) compactCode += id;
+        // Only add if we have an ID and haven't encoded this flavor yet
+        if (id && !encodedFlavors.has(item)) {
+          tierCode += id + ","; // Add a separator between IDs
+          encodedFlavors.add(item);
+          tierHasValidItems = true;
+        }
       });
+
+      // Only add tier if it has valid items
+      if (tierHasValidItems) {
+        compactCode += tierCode;
+      }
     }
   }
+
   const encodedCode = btoa(compactCode);
 
   // Generate the shareable URL
@@ -383,17 +456,30 @@ function updateTierList() {
   // Update it based on the current DOM arrangement
   TIERS.forEach(tier => {
     const tierElement = document.querySelector(`.tier[data-tier="${tier.name}"]`);
-    const items = tierElement.querySelectorAll('.tier-item, .pool-item');
+    // Only consider tier-item in tiers
+    const items = tierElement.querySelectorAll('.tier-item, .pool-item');  // Include both to catch any item that might be mid-transition
     items.forEach(item => {
-      tierList[tier.name].push(item.dataset.name);
+      if (item.dataset.name) {
+        tierList[tier.name].push(item.dataset.name);
+      }
     });
   });
+
+  console.log("Updated tier list:", JSON.parse(JSON.stringify(tierList)));
 }
 
 // Go back to initial screen
 function goBack() {
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   window.location.href = baseUrl;
+}
+
+// Debug function to log the current state of the tier list
+function logTierList() {
+  console.log("Current Tier List:");
+  for (const tier in tierList) {
+    console.log(`${tier}: ${tierList[tier].join(', ')}`);
+  }
 }
 
 // Start by fetching flavors
