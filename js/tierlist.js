@@ -1,4 +1,4 @@
-// All defined tiers and their associated colors (adjusted for better contrast with white text)
+// Define tiers and their associated colors
 const TIERS = [
   { name: "S", color: "rgb(220, 53, 69)" },   // Darker red
   { name: "A", color: "rgb(253, 126, 20)" },  // Darker orange
@@ -13,7 +13,7 @@ let flavors = [];
 let isEditing = false;
 let draggableInstance = null;
 
-// Load flavor data, set up empty tier list, then render
+// Fetch flavor data and initialize the tier list
 async function fetchFlavors() {
   try {
     const response = await fetch("json/gfuel_flavors.json");
@@ -35,13 +35,11 @@ async function fetchFlavors() {
     return acc;
   }, {});
 
-  // Check URL for code parameter
   checkURLforCode();
-
   renderTierList();
 }
 
-// Check if URL contains a code parameter and load it
+// Check if URL contains a code parameter and load the tier list
 function checkURLforCode() {
   const url = new URL(window.location.href);
   const code = url.searchParams.get("c");
@@ -50,7 +48,6 @@ function checkURLforCode() {
     loadTierListFromCode(code);
     console.log("Loaded tier list from URL code");
 
-    // Remove the code parameter and index.html from the URL without reloading the page
     url.searchParams.delete("c");
     const cleanPathname = url.pathname.replace(/\/index\.html$/, '/');
     window.history.pushState({}, document.title, cleanPathname);
@@ -71,9 +68,8 @@ async function loadFromCode() {
   loadTierListFromCode(inputCode);
 }
 
-// Common function to load tier list from code
+// Load tier list from a given code
 function loadTierListFromCode(inputCode) {
-  // Reset tierList to empty
   tierList = TIERS.reduce((acc, tier) => {
     acc[tier.name] = [];
     return acc;
@@ -83,7 +79,6 @@ function loadTierListFromCode(inputCode) {
     const compactCode = atob(inputCode);
     console.log("Decoded code:", compactCode);
 
-    // Create a map of image_id to flavor name
     const idFlavorMap = {};
     flavors.forEach(flavor => {
       if (flavor.image_id) {
@@ -92,11 +87,7 @@ function loadTierListFromCode(inputCode) {
     });
     console.log("ID to Flavor Map:", idFlavorMap);
 
-    // Keep track of processed flavors to avoid duplicates
     const processedFlavors = new Set();
-
-    // Parse the compact code using a clearer approach
-    // Format is now: S1234567,7654321,T5432123,etc
     let currentTier = null;
     let currentId = "";
     let parsingId = false;
@@ -104,7 +95,6 @@ function loadTierListFromCode(inputCode) {
     for (let i = 0; i < compactCode.length; i++) {
       const char = compactCode[i];
 
-      // Check if this is a tier identifier (S, A, B, C, D, F)
       if (TIERS.some(t => t.name === char) && !parsingId) {
         currentTier = char;
         parsingId = true;
@@ -112,7 +102,6 @@ function loadTierListFromCode(inputCode) {
         continue;
       }
 
-      // If we're parsing an ID and encounter a comma, we've reached the end of this ID
       if (char === "," && parsingId) {
         if (currentId && currentTier) {
           const flavorName = idFlavorMap[currentId];
@@ -127,8 +116,6 @@ function loadTierListFromCode(inputCode) {
         continue;
       }
 
-      // If we're parsing an ID and encounter another tier identifier,
-      // finalize the current ID and start a new tier
       if (TIERS.some(t => t.name === char) && parsingId) {
         if (currentId && currentTier) {
           const flavorName = idFlavorMap[currentId];
@@ -144,13 +131,11 @@ function loadTierListFromCode(inputCode) {
         continue;
       }
 
-      // Otherwise, build up the current ID
       if (parsingId) {
         currentId += char;
       }
     }
 
-    // Handle the last ID if there is one
     if (currentId && currentTier) {
       const flavorName = idFlavorMap[currentId];
       if (flavorName && !processedFlavors.has(flavorName)) {
@@ -176,7 +161,7 @@ function loadTierListFromCode(inputCode) {
   }
 }
 
-// Create a new empty tier list for editing
+// Start a new empty tier list for editing
 function startEditing() {
   isEditing = true;
   tierList = TIERS.reduce((acc, tier) => {
@@ -195,10 +180,8 @@ function generateCode() {
     }
   });
 
-  // First, ensure tierList is up-to-date with the current DOM state
   updateTierList();
 
-  // Keep track of what's been encoded to prevent duplicates
   const encodedFlavors = new Set();
   let compactCode = '';
 
@@ -210,15 +193,13 @@ function generateCode() {
 
       tierItems.forEach(item => {
         const id = flavorIdMap[item];
-        // Only add if we have an ID and haven't encoded this flavor yet
         if (id && !encodedFlavors.has(item)) {
-          tierCode += id + ","; // Add a separator between IDs
+          tierCode += id + ",";
           encodedFlavors.add(item);
           tierHasValidItems = true;
         }
       });
 
-      // Only add tier if it has valid items
       if (tierHasValidItems) {
         compactCode += tierCode;
       }
@@ -227,7 +208,6 @@ function generateCode() {
 
   let encodedCode = compactCode ? btoa(compactCode) : "new";
 
-  // Generate the shareable URL
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   const shareableUrl = `${baseUrl}/index.html?c=${encodedCode}`;
 
@@ -258,7 +238,6 @@ function renderTierList() {
   const header = document.getElementById("header");
   const searchContainer = document.getElementById("searchContainer");
 
-  // Destroy existing Draggable instance if it exists
   if (draggableInstance) {
     draggableInstance.destroy();
     draggableInstance = null;
@@ -275,10 +254,8 @@ function renderTierList() {
     initialControls.classList.add("hidden");
     backButton.classList.remove("hidden");
     header.classList.add("with-back-button");
-    // Remove centering in edit mode
     initialView.classList.remove("flex-1", "flex", "flex-col", "justify-center");
 
-    // Create a row for each tier
     TIERS.forEach(({ name, color }) => {
       const row = document.createElement("div");
       row.className = "tier-row";
@@ -291,10 +268,8 @@ function renderTierList() {
       tierContainer.appendChild(row);
     });
 
-    // Keep track of used flavors so we know what should remain in the pool
     const usedFlavors = new Set();
 
-    // Add existing sorted flavors to their tiers
     for (const tier in tierList) {
       const tierEl = document.querySelector(`.tier[data-tier="${tier}"]`);
       tierList[tier].forEach(flavorName => {
@@ -310,7 +285,6 @@ function renderTierList() {
       });
     }
 
-    // Anything unused stays in the pool
     flavors.forEach(flavor => {
       if (!usedFlavors.has(flavor.name)) {
         const itemDiv = document.createElement("div");
@@ -331,7 +305,6 @@ function renderTierList() {
     initialControls.classList.remove("hidden");
     backButton.classList.add("hidden");
     header.classList.remove("with-back-button");
-    // Add back centering for initial view
     initialView.classList.add("flex-1", "flex", "flex-col", "justify-center");
   }
 }
@@ -340,14 +313,11 @@ function renderTierList() {
 function setupSearch() {
   const searchInput = document.getElementById("searchInput");
 
-  // Clear previous input
   searchInput.value = "";
 
-  // Add event listener for search input
   searchInput.addEventListener("input", function() {
     const searchText = this.value.toLowerCase().replace(/\s+/g, '');
 
-    // If search is empty, show all items
     if (searchText === '') {
       document.querySelectorAll(".pool-item").forEach(item => {
         item.style.display = "";
@@ -355,7 +325,6 @@ function setupSearch() {
       return;
     }
 
-    // Get character frequency map for search text
     const searchCharFreq = getCharacterFrequency(searchText);
     const poolItems = document.querySelectorAll(".pool-item");
 
@@ -363,7 +332,6 @@ function setupSearch() {
       const flavorName = item.dataset.name.toLowerCase().replace(/\s+/g, '');
       const flavorCharFreq = getCharacterFrequency(flavorName);
 
-      // Check if flavor contains all characters from the search
       let isMatch = true;
       for (const [char, count] of Object.entries(searchCharFreq)) {
         if (!flavorCharFreq[char] || flavorCharFreq[char] < count) {
@@ -373,9 +341,9 @@ function setupSearch() {
       }
 
       if (isMatch) {
-        item.style.display = ""; // Show item
+        item.style.display = "";
       } else {
-        item.style.display = "none"; // Hide item
+        item.style.display = "none";
       }
     });
   });
@@ -390,15 +358,13 @@ function getCharacterFrequency(str) {
   return charFreq;
 }
 
-// Set up Shopify Draggable
+// Setup Shopify Draggable
 function setupDraggable() {
-  // Define all containers that will participate in drag/drop operations
   const containers = [
     ...document.querySelectorAll('.tier'),
     document.querySelector('.pool')
   ];
 
-  // Initialize Draggable
   draggableInstance = new Draggable.Sortable(containers, {
     draggable: '.tier-item, .pool-item',
     mirror: {
@@ -408,39 +374,32 @@ function setupDraggable() {
     plugins: [Draggable.Plugins.ResizeMirror]
   });
 
-  // Handle drag start
-  draggableInstance.on('drag:start', (event) => {
+  draggableInstance.on('drag:start', () => {
     document.body.style.cursor = 'grabbing';
   });
 
-  // Handle drag stop
-  draggableInstance.on('drag:stop', (event) => {
+  draggableInstance.on('drag:stop', () => {
     document.body.style.cursor = '';
   });
 
-  // Handle sorting between containers
-  draggableInstance.on('sortable:sorted', (event) => {
+  draggableInstance.on('sortable:sorted', () => {
     updateTierList();
   });
 
-  // Update class when dragging over container
   draggableInstance.on('sortable:over', (event) => {
     event.overContainer.classList.add('drop-active');
   });
 
-  // Remove class when dragging out of container
   draggableInstance.on('sortable:out', (event) => {
     event.overContainer.classList.remove('drop-active');
   });
 
-  // Make sure items maintain correct class based on their container
-  draggableInstance.on('sortable:stop', (event) => {
+  draggableInstance.on('sortable:stop', () => {
     const allContainers = document.querySelectorAll('.tier, .pool');
     allContainers.forEach(container => {
       container.classList.remove('drop-active');
     });
 
-    // Update classes based on container
     const poolItems = document.querySelectorAll('.pool .tier-item');
     poolItems.forEach(item => {
       item.classList.remove('tier-item');
@@ -457,16 +416,13 @@ function setupDraggable() {
 
 // Update the tierList object based on current DOM arrangement
 function updateTierList() {
-  // Reset the tierList
   TIERS.forEach(tier => {
     tierList[tier.name] = [];
   });
 
-  // Update it based on the current DOM arrangement
   TIERS.forEach(tier => {
     const tierElement = document.querySelector(`.tier[data-tier="${tier.name}"]`);
-    // Only consider tier-item in tiers
-    const items = tierElement.querySelectorAll('.tier-item, .pool-item');  // Include both to catch any item that might be mid-transition
+    const items = tierElement.querySelectorAll('.tier-item, .pool-item');
     items.forEach(item => {
       if (item.dataset.name) {
         tierList[tier.name].push(item.dataset.name);
@@ -477,7 +433,7 @@ function updateTierList() {
   console.log("Updated tier list:", JSON.parse(JSON.stringify(tierList)));
 }
 
-// Go back to initial screen
+// Go back to the initial screen
 function goBack() {
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   window.location.href = baseUrl;
