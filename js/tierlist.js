@@ -48,7 +48,7 @@ function checkURLforCode() {
     console.log("Loaded tier list from URL code");
 
     url.searchParams.delete("c");
-    const cleanPathname = url.pathname.replace(/\/index\.html$/, '/');
+    const cleanPathname = url.pathname.replace(/\$/, '/');
     window.history.pushState({}, document.title, cleanPathname);
 
     return true;
