@@ -15,28 +15,29 @@
 <body class="bg-gray-900 text-white min-h-screen">
   <div class="p-6 max-w-4xl mx-auto min-h-screen flex flex-col">
     <div id="initialView" class="flex-1 flex flex-col justify-center items-center">
-      <div id="header" class="header">
-        <button id="backButton" onclick="goBack()" class="hidden bg-red-600 px-4 py-2 rounded">Back</button>
-        <div class="text-center">
-          <h1 class="text-6xl font-extrabold">Tub Takes</h1>
-          <h2 class="text-4xl font-bold">for r/GFUEL</h2>
-          <p class="text-lg mt-2 rank-flavors-text hidden">Rank the flavors you've tried!</p>
+      <div class="backing-plate">
+        <div id="header" class="header">
+          <button id="backButton" onclick="goBack()" class="hidden bg-red-600 px-4 py-2 rounded">Back</button>
+          <div class="text-center">
+            <h1 class="text-6xl font-extrabold">Tub Takes</h1>
+            <h2 class="text-4xl font-bold mt-2">for r/GFUEL</h2>
+            <p class="text-lg mt-2 rank-flavors-text hidden">Rank the flavors you've tried!</p>
+          </div>
+          <button id="saveButton" onclick="generateCode()"
+            class="hidden bg-green-600 text-white font-bold px-4 py-2 rounded">
+            Save
+          </button>
         </div>
-        <button id="saveButton" onclick="generateCode()"
-          class="hidden bg-green-600 text-white font-bold px-4 py-2 rounded">
-          Save
-        </button>
-      </div>
 
-      <div id="initialControls" class="mb-4 flex flex-col items-center mt-6">
-        <input type="text" placeholder="Enter tier list code" id="inputCode"
-          class="border p-3 w-96 mb-6 bg-gray-800 text-white text-center text-lg rounded-full border-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
-        <!-- Added mb-6 for gap -->
-        <div class="flex gap-6 mt-4"> <!-- Added mt-4 for gap -->
-          <button onclick="loadFromCode()" class="bg-blue-600 px-6 py-3 rounded text-lg font-medium">Load from
-            Code</button>
-          <button onclick="startEditing()" class="bg-green-600 px-6 py-3 rounded text-lg font-medium">New Tier
-            List</button>
+        <div id="initialControls" class="mb-4 flex flex-col items-center mt-6">
+          <input type="text" placeholder="Enter tier list code" id="inputCode"
+            class="border p-3 w-96 mb-6 bg-gray-800 text-white text-center text-lg rounded-full border-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+          <div class="flex gap-6 mt-4">
+            <button onclick="loadFromCode()" class="bg-blue-600 px-6 py-3 rounded text-lg font-medium">Load from
+              Code</button>
+            <button onclick="startEditing()" class="bg-green-600 px-6 py-3 rounded text-lg font-medium">New Tier
+              List</button>
+          </div>
         </div>
       </div>
     </div>

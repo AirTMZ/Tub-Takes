@@ -203,3 +203,17 @@ body.tierlist-visible #helpButton {
 .hidden {
   display: none;
 }
+
+.backing-plate {
+  background-color: #161e2e;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.tierlist-visible .backing-plate {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+}
