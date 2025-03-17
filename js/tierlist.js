@@ -210,7 +210,7 @@ function generateCode() {
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   const shareableUrl = `${baseUrl}?c=${encodedCode}`;
 
-  navigator.clipboard.writeText(encodedCode);
+  navigator.clipboard.writeText(`/update ${encodedCode}`);
   Swal.fire({
     icon: encodedCode === "new" ? 'error' : 'success',
     title: encodedCode === "new" ? 'Just a Minute!' : 'Important!',
@@ -221,7 +221,7 @@ function generateCode() {
                 ? `<p class="text-2xl font-bold mt-2 mb-4">No Tierlist!</p>
                    <p class="text-red-500">Empty tierlists cannot be saved</p>`
                 : `<p>The tier list still needs to be added to the global rankings by running:</p>
-                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/tierlist update ${encodedCode}</p>
+                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/update ${encodedCode}</p>
                    <p class="text-sm">This command has been copied to your clipboard.</p>`
             }
           </div>`,
