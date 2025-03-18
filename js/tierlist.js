@@ -210,7 +210,7 @@ function generateCode() {
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   const shareableUrl = `${baseUrl}?c=${encodedCode}`;
 
-  navigator.clipboard.writeText(`/update ${encodedCode}`);
+  navigator.clipboard.writeText(`/update code:${encodedCode}`);
   Swal.fire({
     icon: encodedCode === "new" ? 'error' : 'success',
     title: encodedCode === "new" ? 'Just a Minute!' : 'Important!',
