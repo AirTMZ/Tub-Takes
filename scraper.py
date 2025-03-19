@@ -5,13 +5,13 @@ import os
 import re
 
 # URL of the GFuel tubs collection page
-url = 'https://gfuel.com/en-gb/collections/tubs?sort_by=title-ascending'
+url = 'https://gfuel.com/collections/all-tubs?filter.p.product_type=Tub&sort_by=title-ascending'
 
-# Path to the JSON file in the Website folder
-json_file_path = os.path.join(os.path.dirname(__file__), 'Website', 'gfuel_flavors.json')
+# Path to the JSON file in the json folder
+json_file_path = os.path.join(os.path.dirname(__file__), 'json', 'gfuel_flavors.json')
 
 # Directory to save images
-image_dir = os.path.join(os.path.dirname(__file__), 'Website', 'images')
+image_dir = os.path.join(os.path.dirname(__file__), 'images')
 os.makedirs(image_dir, exist_ok=True)
 
 # Send a GET request to the URL
