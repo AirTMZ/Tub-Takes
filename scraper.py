@@ -87,6 +87,9 @@ for product in products:
 # Add new products to the existing data
 existing_data.extend(new_products)
 
+# Sort the data alphabetically by name
+existing_data.sort(key=lambda x: x['name'])
+
 # Save the updated JSON data back to the file
 with open(json_file_path, 'w', encoding='utf-8') as file:
     json.dump(existing_data, file, indent=4, ensure_ascii=False)
