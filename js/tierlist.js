@@ -498,5 +498,38 @@ function showHelp() {
   });
 }
 
-// Start by fetching flavors
-document.addEventListener("DOMContentLoaded", fetchFlavors);
+// Function to handle scroll-to-top button visibility and functionality
+function setupScrollToTopButton() {
+  const scrollTopButton = document.getElementById('scrollTopButton');
+
+  // Show/hide the button based on scroll position
+  function toggleScrollButtonVisibility() {
+    if (window.scrollY > 300) {
+      scrollTopButton.classList.add('visible');
+      scrollTopButton.classList.remove('hidden');
+    } else {
+      scrollTopButton.classList.remove('visible');
+      scrollTopButton.classList.add('hidden');
+    }
+  }
+
+  // Scroll to top when button is clicked
+  scrollTopButton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  // Check scroll position on scroll
+  window.addEventListener('scroll', toggleScrollButtonVisibility);
+
+  // Initial check for button visibility
+  toggleScrollButtonVisibility();
+}
+
+// Add this to your DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", function() {
+  fetchFlavors();
+  setupScrollToTopButton();
+});
