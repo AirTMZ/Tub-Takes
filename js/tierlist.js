@@ -407,13 +407,25 @@ function setupDraggable() {
 
   draggableInstance.on('drag:stop', () => {
     document.body.style.cursor = '';
-
-    // Immediately transform classes for all items
+    // Process transformations immediately
     processItemClassTransformations();
+  });
+
+  // Add this event handler for more immediate class processing
+  draggableInstance.on('sortable:stop', (event) => {
+    const allContainers = document.querySelectorAll('.tier, .pool');
+    allContainers.forEach(container => {
+      container.classList.remove('drop-active');
+    });
+
+    // Process transformations after the DOM has been updated
+    setTimeout(() => processItemClassTransformations(), 0);
   });
 
   draggableInstance.on('sortable:sorted', () => {
     updateTierList();
+    // Process transformations after sorting is done
+    processItemClassTransformations();
   });
 
   draggableInstance.on('sortable:over', (event) => {
@@ -422,16 +434,6 @@ function setupDraggable() {
 
   draggableInstance.on('sortable:out', (event) => {
     event.overContainer.classList.remove('drop-active');
-  });
-
-  draggableInstance.on('sortable:stop', () => {
-    const allContainers = document.querySelectorAll('.tier, .pool');
-    allContainers.forEach(container => {
-      container.classList.remove('drop-active');
-    });
-
-    // Process class transformations again to ensure they took effect
-    processItemClassTransformations();
   });
 }
 
