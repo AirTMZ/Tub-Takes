@@ -341,6 +341,9 @@ function setupSearch() {
   searchInput.addEventListener("input", function() {
     const searchText = this.value.toLowerCase().replace(/\s+/g, '');
 
+    // Process any lingering class transformations first
+    processItemClassTransformations();
+
     if (searchText === '') {
       document.querySelectorAll(".pool-item").forEach(item => {
         item.style.display = "";
@@ -349,7 +352,8 @@ function setupSearch() {
     }
 
     const searchCharFreq = getCharacterFrequency(searchText);
-    const poolItems = document.querySelectorAll(".pool-item");
+    // Only select pool items that are actually IN the pool container
+    const poolItems = document.querySelector('.pool').querySelectorAll(".pool-item");
 
     poolItems.forEach(item => {
       const flavorName = item.dataset.name.toLowerCase().replace(/\s+/g, '');
@@ -403,6 +407,9 @@ function setupDraggable() {
 
   draggableInstance.on('drag:stop', () => {
     document.body.style.cursor = '';
+
+    // Immediately transform classes for all items
+    processItemClassTransformations();
   });
 
   draggableInstance.on('sortable:sorted', () => {
@@ -423,17 +430,25 @@ function setupDraggable() {
       container.classList.remove('drop-active');
     });
 
-    const poolItems = document.querySelectorAll('.pool .tier-item');
-    poolItems.forEach(item => {
-      item.classList.remove('tier-item');
-      item.classList.add('pool-item');
-    });
+    // Process class transformations again to ensure they took effect
+    processItemClassTransformations();
+  });
+}
 
-    const tierItems = document.querySelectorAll('.tier .pool-item');
-    tierItems.forEach(item => {
-      item.classList.remove('pool-item');
-      item.classList.add('tier-item');
-    });
+// New helper function to handle class transformations
+function processItemClassTransformations() {
+  // First, handle items in the pool
+  const poolItems = document.querySelectorAll('.pool .tier-item');
+  poolItems.forEach(item => {
+    item.classList.remove('tier-item');
+    item.classList.add('pool-item');
+  });
+
+  // Then, handle items in tiers
+  const tierItems = document.querySelectorAll('.tier .pool-item');
+  tierItems.forEach(item => {
+    item.classList.remove('pool-item');
+    item.classList.add('tier-item');
   });
 }
 
