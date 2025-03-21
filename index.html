@@ -5,11 +5,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>r/GFUEL Tub Takes</title>
+  <!-- Add Ubuntu font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Ubuntu', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.8/lib/draggable.bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.0/crc32.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      font-family: 'Ubuntu', sans-serif;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen">
