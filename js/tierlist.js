@@ -195,7 +195,45 @@ function generateCode() {
     }
   }
 
-  const encodedCode = compactCode ? btoa(compactCode) : "new";
+  let encodedCode = compactCode ? btoa(compactCode) : "new";
+
+  const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
+  const shareableUrl = `${baseUrl}?c=${encodedCode}`;
+
+  navigator.clipboard.writeText(`/update code:${encodedCode}`);
+  Swal.fire({
+    icon: encodedCode === "new" ? 'error' : 'success',
+    title: encodedCode === "new" ? 'Just a Minute!' : 'Important!',
+    html: `<div class="text-center">
+            <p>${encodedCode === "new" ? "Your tier list cannot be exported." : "You still have one more step to save."}</p>
+            ${
+              encodedCode === "new"
+                ? `<p class="text-2xl font-bold mt-2 mb-4">No Tierlist!</p>
+                   <p class="text-red-500">Empty tierlists cannot be saved</p>`
+                : `<p>The tier list still needs to be added to the global rankings by running:</p>
+                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/update code:${encodedCode}</p>
+                   <p class="text-sm">This command has been copied to your clipboard.</p>`
+            }
+          </div>`,
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#10B981',
+    showCancelButton: true,
+    cancelButtonText: 'Share',
+    cancelButtonColor: '#3085d6'
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.cancel) {
+      navigator.clipboard.writeText(shareableUrl).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'URL Copied!',
+          text: 'The shareable URL has been copied to your clipboard.',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#10B981'
+        });
+      });
+    }
+  });
+
   return encodedCode;
 }
 
