@@ -75,35 +75,32 @@ function loadTierListFromCode(inputCode) {
   }, {});
 
   try {
+    const flavorCodeToName = {};
+    flavors.forEach(flavor => {
+      flavorCodeToName[flavor.code] = flavor.name;
+    });
+
     const compactCode = atob(inputCode);
     console.log("Decoded code:", compactCode);
 
-    const idFlavorMap = {};
-    flavors.forEach(flavor => {
-      if (flavor.image_id) {
-        idFlavorMap[flavor.image_id] = flavor.name;
-      }
-    });
-    console.log("ID to Flavor Map:", idFlavorMap);
-
     const processedFlavors = new Set();
     let currentTier = null;
-    let currentId = "";
-    let parsingId = false;
+    let currentCode = "";
+    let parsingCode = false;
 
     for (let i = 0; i < compactCode.length; i++) {
       const char = compactCode[i];
 
-      if (TIERS.some(t => t.name === char) && !parsingId) {
+      if (TIERS.some(t => t.name === char) && !parsingCode) {
         currentTier = char;
-        parsingId = true;
-        currentId = "";
+        parsingCode = true;
+        currentCode = "";
         continue;
       }
 
-      if (char === "," && parsingId) {
-        if (currentId && currentTier) {
-          const flavorName = idFlavorMap[currentId];
+      if (char === "," && parsingCode) {
+        if (currentCode && currentTier) {
+          const flavorName = flavorCodeToName[currentCode];
           if (flavorName && !processedFlavors.has(flavorName)) {
             if (TIERS.some(t => t.name === currentTier)) {
               tierList[currentTier].push(flavorName);
@@ -111,13 +108,13 @@ function loadTierListFromCode(inputCode) {
             }
           }
         }
-        currentId = "";
+        currentCode = "";
         continue;
       }
 
-      if (TIERS.some(t => t.name === char) && parsingId) {
-        if (currentId && currentTier) {
-          const flavorName = idFlavorMap[currentId];
+      if (TIERS.some(t => t.name === char) && parsingCode) {
+        if (currentCode && currentTier) {
+          const flavorName = flavorCodeToName[currentCode];
           if (flavorName && !processedFlavors.has(flavorName)) {
             if (TIERS.some(t => t.name === currentTier)) {
               tierList[currentTier].push(flavorName);
@@ -126,17 +123,17 @@ function loadTierListFromCode(inputCode) {
           }
         }
         currentTier = char;
-        currentId = "";
+        currentCode = "";
         continue;
       }
 
-      if (parsingId) {
-        currentId += char;
+      if (parsingCode) {
+        currentCode += char;
       }
     }
 
-    if (currentId && currentTier) {
-      const flavorName = idFlavorMap[currentId];
+    if (currentCode && currentTier) {
+      const flavorName = flavorCodeToName[currentCode];
       if (flavorName && !processedFlavors.has(flavorName)) {
         if (TIERS.some(t => t.name === currentTier)) {
           tierList[currentTier].push(flavorName);
@@ -170,17 +167,14 @@ function startEditing() {
   renderTierList();
 }
 
+// Map flavor names to their codes
+const flavorNameToCode = {};
+flavors.forEach(flavor => {
+  flavorNameToCode[flavor.name] = flavor.code;
+});
+
 // Generate a shareable code for the current tier arrangement
 function generateCode() {
-  const flavorIdMap = {};
-  flavors.forEach(flavor => {
-    if (flavor.image_id) {
-      flavorIdMap[flavor.name] = flavor.image_id;
-    }
-  });
-
-  updateTierList();
-
   const encodedFlavors = new Set();
   let compactCode = '';
 
@@ -188,61 +182,21 @@ function generateCode() {
     const tierItems = tierList[tier.name] || [];
     if (tierItems.length > 0) {
       let tierCode = tier.name;
-      let tierHasValidItems = false;
 
       tierItems.forEach(item => {
-        const id = flavorIdMap[item];
-        if (id && !encodedFlavors.has(item)) {
-          tierCode += id + ",";
+        const code = flavorNameToCode[item];
+        if (code && !encodedFlavors.has(item)) {
+          tierCode += code + ",";
           encodedFlavors.add(item);
-          tierHasValidItems = true;
         }
       });
 
-      if (tierHasValidItems) {
-        compactCode += tierCode;
-      }
+      compactCode += tierCode;
     }
   }
 
-  let encodedCode = compactCode ? btoa(compactCode) : "new";
-
-  const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
-  const shareableUrl = `${baseUrl}?c=${encodedCode}`;
-
-  navigator.clipboard.writeText(`/update code:${encodedCode}`);
-  Swal.fire({
-    icon: encodedCode === "new" ? 'error' : 'success',
-    title: encodedCode === "new" ? 'Just a Minute!' : 'Important!',
-    html: `<div class="text-center">
-            <p>${encodedCode === "new" ? "Your tier list cannot be exported." : "You still have one more step to save."}</p>
-            ${
-              encodedCode === "new"
-                ? `<p class="text-2xl font-bold mt-2 mb-4">No Tierlist!</p>
-                   <p class="text-red-500">Empty tierlists cannot be saved</p>`
-                : `<p>The tier list still needs to be added to the global rankings by running:</p>
-                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/update code:${encodedCode}</p>
-                   <p class="text-sm">This command has been copied to your clipboard.</p>`
-            }
-          </div>`,
-    confirmButtonText: 'OK',
-    confirmButtonColor: '#10B981',
-    showCancelButton: true,
-    cancelButtonText: 'Share',
-    cancelButtonColor: '#3085d6'
-}).then((result) => {
-    if (result.dismiss === Swal.DismissReason.cancel) {
-        navigator.clipboard.writeText(shareableUrl).then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'URL Copied!',
-                text: 'The shareable URL has been copied to your clipboard.',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#10B981'
-            });
-        });
-    }
-});
+  const encodedCode = compactCode ? btoa(compactCode) : "new";
+  return encodedCode;
 }
 
 // Render the tiers and pool, toggling editing state

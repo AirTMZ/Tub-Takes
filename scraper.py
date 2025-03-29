@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 import re
+import hashlib
 
 # URL of the GFuel tubs collection page
 url = 'https://gfuel.com/collections/all-tubs?filter.p.product_type=Tub&sort_by=title-ascending'
@@ -40,6 +41,11 @@ def download_image(img_url, img_path):
             img_file.write(img_response.content)
         return True
     return False
+
+# Function to generate a unique code based on the flavor name
+def generate_flavor_code(name):
+    # Use a hash of the name to generate a unique and consistent code
+    return hashlib.md5(name.encode('utf-8')).hexdigest()[:8]
 
 # Function to scrape a single product from a direct URL
 def scrape_single_product(product_url):
@@ -191,10 +197,14 @@ def scrape_single_product(product_url):
         if download_success:
             print(f"Downloaded image: {img_src}")
 
+        # Generate a unique code for the flavor
+        flavor_code = generate_flavor_code(name)
+
         # Create product data
         product_data = {
             'name': name,
-            'image': img_filename
+            'image': img_filename,
+            'code': flavor_code  # Add the generated code
         }
 
         if image_id:
@@ -248,6 +258,9 @@ def scrape_collection():
         # Download the image
         downloaded = download_image(img_src, img_path)
 
+        # Generate a unique code for the flavor
+        flavor_code = generate_flavor_code(name)
+
         # Check if the product already exists in the JSON data
         product_exists = False
         for item in existing_data:
@@ -262,7 +275,8 @@ def scrape_collection():
         if not product_exists:
             new_product = {
                 'name': name,
-                'image': img_filename
+                'image': img_filename,
+                'code': flavor_code  # Add the generated code
             }
             if image_id:
                 new_product['image_id'] = image_id
