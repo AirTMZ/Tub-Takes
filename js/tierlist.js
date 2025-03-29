@@ -167,14 +167,14 @@ function startEditing() {
   renderTierList();
 }
 
-// Map flavor names to their codes
-const flavorNameToCode = {};
-flavors.forEach(flavor => {
-  flavorNameToCode[flavor.name] = flavor.code;
-});
-
 // Generate a shareable code for the current tier arrangement
 function generateCode() {
+  // Create the mapping here, when flavors are actually loaded
+  const flavorNameToCode = {};
+  flavors.forEach(flavor => {
+    flavorNameToCode[flavor.name] = flavor.code;
+  });
+
   const encodedFlavors = new Set();
   let compactCode = '';
 
@@ -188,6 +188,8 @@ function generateCode() {
         if (code && !encodedFlavors.has(item)) {
           tierCode += code + ",";
           encodedFlavors.add(item);
+        } else {
+          console.warn(`Missing code for flavor: ${item}`);
         }
       });
 
@@ -377,7 +379,7 @@ function getCharacterFrequency(str) {
   return charFreq;
 }
 
-// Setup Shopify Draggable
+// Setup Shopify Draggable with improved event handling
 function setupDraggable() {
   const containers = [
     ...document.querySelectorAll('.tier'),
@@ -399,25 +401,29 @@ function setupDraggable() {
 
   draggableInstance.on('drag:stop', () => {
     document.body.style.cursor = '';
-    // Process transformations immediately
+    // Process transformations immediately after drag stops
     processItemClassTransformations();
+    // Update the tierList after classes are processed
+    updateTierList();
   });
 
-  // Add this event handler for more immediate class processing
   draggableInstance.on('sortable:stop', (event) => {
     const allContainers = document.querySelectorAll('.tier, .pool');
     allContainers.forEach(container => {
       container.classList.remove('drop-active');
     });
 
-    // Process transformations after the DOM has been updated
-    setTimeout(() => processItemClassTransformations(), 0);
+    // Process transformations and update tierList right after sorting
+    setTimeout(() => {
+      processItemClassTransformations();
+      updateTierList();
+    }, 0);
   });
 
+  // We don't need to call updateTierList here as it might cause duplicates
+  // during the sorting operation. We'll update only after sorting is complete.
   draggableInstance.on('sortable:sorted', () => {
-    updateTierList();
-    // Process transformations after sorting is done
-    processItemClassTransformations();
+    // No immediate update - wait for sortable:stop event
   });
 
   draggableInstance.on('sortable:over', (event) => {
@@ -429,16 +435,16 @@ function setupDraggable() {
   });
 }
 
-// New helper function to handle class transformations
+// Improved helper function to handle class transformations
 function processItemClassTransformations() {
-  // First, handle items in the pool
+  // First, get all elements in the pool area with tier-item class
   const poolItems = document.querySelectorAll('.pool .tier-item');
   poolItems.forEach(item => {
     item.classList.remove('tier-item');
     item.classList.add('pool-item');
   });
 
-  // Then, handle items in tiers
+  // Then, get all elements in tier areas with pool-item class
   const tierItems = document.querySelectorAll('.tier .pool-item');
   tierItems.forEach(item => {
     item.classList.remove('pool-item');
@@ -448,16 +454,27 @@ function processItemClassTransformations() {
 
 // Update the tierList object based on current DOM arrangement
 function updateTierList() {
+  // Clear all tiers first
   TIERS.forEach(tier => {
     tierList[tier.name] = [];
   });
 
+  // Process class transformations to ensure correct classes
+  processItemClassTransformations();
+
+  // Track processed items to prevent duplicates
+  const processedItems = new Set();
+
+  // Only collect tier-items (not pool-items) from each tier
   TIERS.forEach(tier => {
     const tierElement = document.querySelector(`.tier[data-tier="${tier.name}"]`);
-    const items = tierElement.querySelectorAll('.tier-item, .pool-item');
+    // Only get tier-items, not pool-items
+    const items = tierElement.querySelectorAll('.tier-item');
+
     items.forEach(item => {
-      if (item.dataset.name) {
+      if (item.dataset.name && !processedItems.has(item.dataset.name)) {
         tierList[tier.name].push(item.dataset.name);
+        processedItems.add(item.dataset.name);
       }
     });
   });
