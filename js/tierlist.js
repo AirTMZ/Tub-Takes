@@ -40,7 +40,11 @@ async function fetchFlavors() {
   // Update toggle text after loading flavors
   updateOldFlavorsToggleText();
 
-  checkURLforCode();
+  // First check for backup, if not found then check URL code
+  if (!checkForBackup()) {
+    checkURLforCode();
+  }
+
   renderTierList();
 }
 
@@ -250,6 +254,9 @@ function generateCode() {
       });
     }
   });
+
+  // After generating the code and showing the success message, clear the backup
+  clearTierlistBackup();
 
   return encodedCode;
 }
@@ -560,13 +567,67 @@ function updateTierList() {
     });
   });
 
+  // Save to localStorage if we're in editing mode
+  if (isEditing) {
+    localStorage.setItem('gfuel-tierlist-backup', JSON.stringify(tierList));
+    localStorage.setItem('gfuel-tierlist-showOldFlavors', showOldFlavors);
+  }
+
   console.log("Updated tier list:", JSON.parse(JSON.stringify(tierList)));
 }
 
-// Go back to the initial screen
+// Clear the localStorage backup
+function clearTierlistBackup() {
+  localStorage.removeItem('gfuel-tierlist-backup');
+  localStorage.removeItem('gfuel-tierlist-showOldFlavors');
+}
+
+// Go back to the initial screen and clear backup
 function goBack() {
+  clearTierlistBackup();
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   window.location.href = baseUrl;
+}
+
+// Check for backup on page load
+function checkForBackup() {
+  const backupData = localStorage.getItem('gfuel-tierlist-backup');
+  if (backupData) {
+    try {
+      const savedTierList = JSON.parse(backupData);
+      const savedShowOldFlavors = localStorage.getItem('gfuel-tierlist-showOldFlavors') === 'true';
+
+      // Restore the tierlist state
+      tierList = savedTierList;
+      showOldFlavors = savedShowOldFlavors;
+      isEditing = true;
+
+      // Render the restored tierlist
+      renderTierList();
+
+      // Show a notification
+      Swal.fire({
+        icon: 'info',
+        title: 'Tierlist Restored',
+        text: 'Your previous tierlist has been restored from backup.',
+        confirmButtonText: 'Continue Editing',
+        showCancelButton: true,
+        cancelButtonText: 'Discard',
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          // User chose to discard the backup
+          clearTierlistBackup();
+          goBack();
+        }
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error restoring backup:", error);
+      clearTierlistBackup();
+    }
+  }
+  return false;
 }
 
 // Debug function to log the current state of the tier list
