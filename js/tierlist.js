@@ -19,11 +19,14 @@ async function fetchFlavors() {
     flavors = await response.json();
     console.log("Flavors loaded:", flavors);
   } catch (error) {
-    console.error("Failed to load flavors:", error);
+    console.log("Failed to load flavors, using dummy data");
     flavors = [
-      { name: "Blue Ice", image: "https://via.placeholder.com/100?text=Blue+Ice", old: false },
-      { name: "Tropical Rain", image: "https://via.placeholder.com/100?text=Tropical+Rain", old: false },
-      { name: "Sour Cherry", image: "https://via.placeholder.com/100?text=Sour+Cherry", old: false },
+      { name: "Blue Ice", image: "https://via.placeholder.com/100?text=Blue+Ice" },
+      { name: "Tropical Rain", image: "https://via.placeholder.com/100?text=Tropical+Rain" },
+      { name: "Sour Cherry", image: "https://via.placeholder.com/100?text=Sour+Cherry" },
+      { name: "Strawberry Banana", image: "https://via.placeholder.com/100?text=Strawberry" },
+      { name: "Watermelon", image: "https://via.placeholder.com/100?text=Watermelon" },
+      { name: "Rainbow Sherbet", image: "https://via.placeholder.com/100?text=Rainbow" }
     ];
   }
   tierList = TIERS.reduce((acc, tier) => {
@@ -155,24 +158,12 @@ function loadTierListFromCode(inputCode) {
 }
 
 // Start a new empty tier list for editing
-async function startEditing() {
-  console.log("startEditing function called"); // Debug log
+function startEditing() {
   isEditing = true;
-
-  // Ensure flavors are loaded before rendering
-  if (!flavors || flavors.length === 0) {
-    console.log("Flavors not loaded. Fetching...");
-    await fetchFlavors();
-  }
-
-  console.log("Starting new tier list. Flavors:", flavors);
-
-  // Reset the tier list
   tierList = TIERS.reduce((acc, tier) => {
     acc[tier.name] = [];
     return acc;
   }, {});
-
   renderTierList();
 }
 
@@ -250,8 +241,6 @@ function generateCode() {
 
 // Render the tiers and pool, toggling editing state
 function renderTierList() {
-  console.log("renderTierList function called"); // Debug log
-
   const tierContainer = document.getElementById("tierContainer");
   const poolArea = document.getElementById("poolArea");
   const initialControls = document.getElementById("initialControls");
@@ -261,14 +250,16 @@ function renderTierList() {
   const header = document.getElementById("header");
   const searchContainer = document.getElementById("searchContainer");
   const rankFlavorsText = document.querySelector(".rank-flavors-text");
-  const toggleOld = document.getElementById("toggleOld");
 
-  // Clear the pool and tier container
-  poolArea.innerHTML = "";
+  if (draggableInstance) {
+    draggableInstance.destroy();
+    draggableInstance = null;
+  }
+
   tierContainer.innerHTML = "";
+  poolArea.innerHTML = "";
 
   if (isEditing) {
-    // Show editing UI
     document.body.classList.add("tierlist-visible");
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
@@ -280,7 +271,6 @@ function renderTierList() {
     initialView.classList.remove("flex-1", "flex", "flex-col", "justify-center");
     rankFlavorsText.classList.remove("hidden");
 
-    // Render tiers
     TIERS.forEach(({ name, color }) => {
       const row = document.createElement("div");
       row.className = "tier-row";
@@ -293,8 +283,8 @@ function renderTierList() {
       tierContainer.appendChild(row);
     });
 
-    // Populate tiers with existing items
     const usedFlavors = new Set();
+
     for (const tier in tierList) {
       const tierEl = document.querySelector(`.tier[data-tier="${tier}"]`);
       tierList[tier].forEach(flavorName => {
@@ -310,12 +300,7 @@ function renderTierList() {
       });
     }
 
-    // Filter and render pool items
-    const showOld = toggleOld ? toggleOld.checked : false;
-    const filteredFlavors = flavors.filter(flavor => flavor.old === showOld);
-    console.log("Filtered flavors:", filteredFlavors);
-
-    filteredFlavors.forEach(flavor => {
+    flavors.forEach(flavor => {
       if (!usedFlavors.has(flavor.name)) {
         const itemDiv = document.createElement("div");
         itemDiv.className = "pool-item";
@@ -325,11 +310,9 @@ function renderTierList() {
       }
     });
 
-    // Setup draggable and search functionality
     setupDraggable();
     setupSearch();
   } else {
-    // Show initial view
     document.body.classList.remove("tierlist-visible");
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
@@ -343,31 +326,57 @@ function renderTierList() {
   }
 }
 
-// Add event listener to the toggle switch
-document.getElementById("toggleOld").addEventListener("change", renderTierList);
-
-document.getElementById("toggleLabel").addEventListener("click", () => {
-  const toggleOld = document.getElementById("toggleOld");
-  toggleOld.checked = !toggleOld.checked;
-  renderTierList(); // Re-render the tier list based on the new toggle state
-});
-
 // Setup search functionality for pool items
 function setupSearch() {
   const searchInput = document.getElementById("searchInput");
 
   searchInput.value = "";
 
-  searchInput.addEventListener("input", function () {
+  searchInput.addEventListener("input", function() {
     const searchText = this.value.toLowerCase().replace(/\s+/g, '');
 
-    const poolItems = document.querySelectorAll(".pool-item");
+    // Process any lingering class transformations first
+    processItemClassTransformations();
+
+    if (searchText === '') {
+      document.querySelectorAll(".pool-item").forEach(item => {
+        item.style.display = "";
+      });
+      return;
+    }
+
+    const searchCharFreq = getCharacterFrequency(searchText);
+    // Only select pool items that are actually IN the pool container
+    const poolItems = document.querySelector('.pool').querySelectorAll(".pool-item");
 
     poolItems.forEach(item => {
       const flavorName = item.dataset.name.toLowerCase().replace(/\s+/g, '');
-      item.style.display = flavorName.includes(searchText) ? "" : "none";
+      const flavorCharFreq = getCharacterFrequency(flavorName);
+
+      let isMatch = true;
+      for (const [char, count] of Object.entries(searchCharFreq)) {
+        if (!flavorCharFreq[char] || flavorCharFreq[char] < count) {
+          isMatch = false;
+          break;
+        }
+      }
+
+      if (isMatch) {
+        item.style.display = "";
+      } else {
+        item.style.display = "none";
+      }
     });
   });
+}
+
+// Helper function to count character frequencies
+function getCharacterFrequency(str) {
+  const charFreq = {};
+  for (const char of str) {
+    charFreq[char] = (charFreq[char] || 0) + 1;
+  }
+  return charFreq;
 }
 
 // Setup Shopify Draggable with improved event handling

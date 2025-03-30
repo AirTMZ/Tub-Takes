@@ -83,6 +83,7 @@ def scrape_single_product(product_url):
         # Find the product images
         found_img = False
         img_src = None
+        image_id = None
 
         # First look for the specific tub image
         all_images = soup.find_all('img', class_='photoswipe__image')
@@ -122,6 +123,11 @@ def scrape_single_product(product_url):
                         # Ensure URL has protocol
                         if img_src.startswith('//'):
                             img_src = 'https:' + img_src
+
+                # Extract the image ID from the URL
+                id_match = re.search(r'v=(\d+)', img_src)
+                if id_match:
+                    image_id = id_match.group(1)
 
                 break
 
@@ -172,6 +178,12 @@ def scrape_single_product(product_url):
                     if not img_src.startswith('http'):
                         img_src = 'https:' + img_src
 
+                # Extract the image ID from the URL
+                if img_src:
+                    id_match = re.search(r'v=(\d+)', img_src)
+                    if id_match:
+                        image_id = id_match.group(1)
+
         if not img_src:
             print("Could not find product image.")
             return None
@@ -195,6 +207,9 @@ def scrape_single_product(product_url):
             'code': flavor_code  # Add the generated code
         }
 
+        if image_id:
+            product_data['image_id'] = image_id
+
         return product_data
     except Exception as e:
         print(f"Error scraping product: {e}")
@@ -217,18 +232,22 @@ def scrape_collection():
 
     # Extract product names and 1080p cover art links
     new_products = []
-    scraped_names = []  # Keep track of all scraped names
     for product in products:
         name_tag = product.find('div', class_='grid-product__title')
         if name_tag:
             name = name_tag.text.strip()
-            scraped_names.append(name)  # Add to the list of scraped names
         else:
             continue
 
         img_tag = product.find('img', class_='lazyload')
         if img_tag and 'data-src' in img_tag.attrs:
             img_src = 'https:' + img_tag['data-src'].replace('{width}', '1080')
+
+            # Extract the image ID from the URL
+            image_id = None
+            id_match = re.search(r'v=(\d+)', img_src)
+            if id_match:
+                image_id = id_match.group(1)
         else:
             continue
 
@@ -247,6 +266,9 @@ def scrape_collection():
         for item in existing_data:
             if item['name'] == name:
                 product_exists = True
+                # Update the image ID if it's not present or has changed
+                if image_id and item.get('image_id') != image_id:
+                    item['image_id'] = image_id
                 break
 
         # If product doesn't exist, add it to new_products list
@@ -254,15 +276,11 @@ def scrape_collection():
             new_product = {
                 'name': name,
                 'image': img_filename,
-                'code': flavor_code,
-                'old': False  # New products are not old
+                'code': flavor_code  # Add the generated code
             }
+            if image_id:
+                new_product['image_id'] = image_id
             new_products.append(new_product)
-
-    # Mark products as old if they are no longer scrapable
-    for item in existing_data:
-        if item['name'] not in scraped_names:
-            item['old'] = True
 
     # Add new products to the existing data
     existing_data.extend(new_products)
@@ -271,7 +289,7 @@ def scrape_collection():
     save_json_data(existing_data)
 
     print(f"Added {len(new_products)} new products to the JSON file.")
-    print(f"Updated 'old' status for products no longer scrapable.")
+    print(f"Updated image IDs for all products.")
 
     return existing_data
 
@@ -294,6 +312,10 @@ if user_input.strip():
             if item['name'] == product_data['name']:
                 product_exists = True
                 print(f"Product '{product_data['name']}' already exists in the database.")
+                # Update image ID if needed
+                if 'image_id' in product_data and item.get('image_id') != product_data['image_id']:
+                    item['image_id'] = product_data['image_id']
+                    print(f"Updated image ID for '{product_data['name']}'.")
                 break
 
         if not product_exists:
