@@ -276,12 +276,6 @@
     "old": true
   },
   {
-    "name": "Dragon Fruit",
-    "image": "Dragon_Fruit.jpg",
-    "code": "2744bdd6",
-    "old": true
-  },
-  {
     "name": "Dragons Fury",
     "image": "Dragons_Fury.jpg",
     "code": "734f13c4",
@@ -867,12 +861,6 @@
     "name": "Peach Mango",
     "image": "Peach_Mango.jpg",
     "code": "b96bbfdd",
-    "old": true
-  },
-  {
-    "name": "Peach Rings",
-    "image": "Peach_Rings.jpg",
-    "code": "1581dd2d",
     "old": true
   },
   {
