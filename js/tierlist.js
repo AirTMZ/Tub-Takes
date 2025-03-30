@@ -12,6 +12,9 @@ let flavors = [];
 let isEditing = false;
 let draggableInstance = null;
 
+// Add state variable for showing old flavors
+let showOldFlavors = false;
+
 // Fetch flavor data and initialize the tier list
 async function fetchFlavors() {
   try {
@@ -33,6 +36,9 @@ async function fetchFlavors() {
     acc[tier.name] = [];
     return acc;
   }, {});
+
+  // Update toggle text after loading flavors
+  updateOldFlavorsToggleText();
 
   checkURLforCode();
   renderTierList();
@@ -249,6 +255,7 @@ function renderTierList() {
   const saveButton = document.getElementById("saveButton");
   const header = document.getElementById("header");
   const searchContainer = document.getElementById("searchContainer");
+  const oldFlavorsToggleContainer = document.getElementById("oldFlavorsToggleContainer");
   const rankFlavorsText = document.querySelector(".rank-flavors-text");
 
   if (draggableInstance) {
@@ -264,6 +271,7 @@ function renderTierList() {
     tierContainer.classList.remove("hidden");
     poolArea.classList.remove("hidden");
     searchContainer.classList.remove("hidden");
+    oldFlavorsToggleContainer.classList.remove("hidden");
     saveButton.classList.remove("hidden");
     initialControls.classList.add("hidden");
     backButton.classList.remove("hidden");
@@ -287,6 +295,8 @@ function renderTierList() {
 
     for (const tier in tierList) {
       const tierEl = document.querySelector(`.tier[data-tier="${tier}"]`);
+      if (!tierEl) continue;
+
       tierList[tier].forEach(flavorName => {
         const flavor = flavors.find(f => f.name === flavorName);
         if (flavor) {
@@ -300,8 +310,9 @@ function renderTierList() {
       });
     }
 
+    // Filter flavors for pool based on showOldFlavors toggle
     flavors.forEach(flavor => {
-      if (!usedFlavors.has(flavor.name)) {
+      if (!usedFlavors.has(flavor.name) && (showOldFlavors || !flavor.old)) {
         const itemDiv = document.createElement("div");
         itemDiv.className = "pool-item";
         itemDiv.dataset.name = flavor.name;
@@ -312,11 +323,13 @@ function renderTierList() {
 
     setupDraggable();
     setupSearch();
+    setupOldFlavorsToggle();
   } else {
     document.body.classList.remove("tierlist-visible");
     tierContainer.classList.add("hidden");
     poolArea.classList.add("hidden");
     searchContainer.classList.add("hidden");
+    oldFlavorsToggleContainer.classList.add("hidden");
     saveButton.classList.add("hidden");
     initialControls.classList.remove("hidden");
     backButton.classList.add("hidden");
@@ -324,6 +337,59 @@ function renderTierList() {
     initialView.classList.add("flex-1", "flex", "flex-col", "justify-center");
     rankFlavorsText.classList.add("hidden");
   }
+}
+
+// Add a function to count old flavors
+function countOldFlavors() {
+  return flavors.filter(flavor => flavor.old === true).length;
+}
+
+// Update toggle appearance based on state
+function updateToggleAppearance(toggleElement) {
+  // No need to manually update appearance, CSS handles it now
+  // The function is kept for compatibility
+}
+
+// Update the text in the toggle to show number of old flavors
+function updateOldFlavorsToggleText() {
+  const oldFlavorsCount = countOldFlavors();
+  const toggleLabel = document.querySelector('#oldFlavorsToggleContainer .flex.items-center span');
+  if (toggleLabel) {
+    toggleLabel.textContent = `Show ${oldFlavorsCount} Extra (old) flavors`;
+  }
+}
+
+// Add function to setup toggle for old flavors
+function setupOldFlavorsToggle() {
+  const toggleCheckbox = document.getElementById("toggleOldFlavors");
+
+  if (!toggleCheckbox) return; // Safety check
+
+  // Update the toggle text with the count
+  updateOldFlavorsToggleText();
+
+  // Set initial state
+  toggleCheckbox.checked = showOldFlavors;
+
+  // Remove existing listeners to prevent duplicates
+  toggleCheckbox.removeEventListener("change", handleToggleChange);
+
+  // Add change listener
+  toggleCheckbox.addEventListener("change", handleToggleChange);
+}
+
+// Separate function to handle toggle changes
+function handleToggleChange() {
+  showOldFlavors = this.checked;
+  updateToggleAppearance(this);
+
+  // Completely re-render the tierlist instead of just updating the pool
+  // This maintains the correct draggable behavior
+  if (draggableInstance) {
+    draggableInstance.destroy();
+    draggableInstance = null;
+  }
+  renderTierList();
 }
 
 // Setup search functionality for pool items
