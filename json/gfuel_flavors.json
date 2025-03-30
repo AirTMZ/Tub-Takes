@@ -206,12 +206,6 @@
     "old": true
   },
   {
-    "name": "Clickbait",
-    "image": "Clickbait.jpg",
-    "code": "5ea47ba9",
-    "old": true
-  },
-  {
     "name": "Coconut",
     "image": "Coconut.jpg",
     "code": "540e009b",
@@ -946,12 +940,6 @@
     "old": true
   },
   {
-    "name": "Power Pellet",
-    "image": "Power_Pellet.jpg",
-    "code": "7895a691",
-    "old": true
-  },
-  {
     "name": "Queen Of Hearts",
     "image": "Queen_Of_Hearts.jpg",
     "code": "42db1706",
@@ -1289,12 +1277,6 @@
     "name": "The Great Golden Slushie",
     "image": "The_Great_Golden_Slushie.jpg",
     "code": "fbf29702",
-    "old": true
-  },
-  {
-    "name": "The Juice",
-    "image": "The_Juice.jpg",
-    "code": "142a498c",
     "old": true
   },
   {
