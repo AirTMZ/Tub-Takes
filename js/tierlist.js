@@ -52,7 +52,6 @@ async function fetchFlavors() {
 function checkURLforCode() {
   const url = new URL(window.location.href);
   const code = url.searchParams.get("c");
-  const shortCode = url.searchParams.get("s");
 
   if (code) {
     // Fix base64 padding and replace URL-safe characters
@@ -67,29 +66,10 @@ function checkURLforCode() {
     loadTierListFromCode(fixedCode);
     console.log("Loaded tier list from URL code");
 
-    // Clean URL
     url.searchParams.delete("c");
-    window.history.pushState({}, document.title, url.toString());
-    return true;
-  }
-  else if (shortCode) {
-    // Handle compressed code
-    const fullCode = decompressCode(shortCode);
-    if (fullCode) {
-      loadTierListFromCode(fullCode);
-      console.log("Loaded tier list from compressed code");
+    const cleanPathname = url.pathname.replace(/\$/, '/');
+    window.history.pushState({}, document.title, cleanPathname);
 
-      // Clean URL
-      url.searchParams.delete("s");
-      window.history.pushState({}, document.title, url.toString());
-      return true;
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Short Code',
-        text: 'The provided short code could not be decompressed.'
-      });
-    }
     return true;
   }
 
@@ -103,22 +83,7 @@ async function loadFromCode() {
     Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter a valid code' });
     return;
   }
-
-  // Handle both short codes and full codes
-  if (inputCode.startsWith("TT-")) {
-    const fullCode = decompressCode(inputCode);
-    if (fullCode) {
-      loadTierListFromCode(fullCode);
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Code',
-        text: 'The provided short code could not be decompressed.'
-      });
-    }
-  } else {
-    loadTierListFromCode(inputCode);
-  }
+  loadTierListFromCode(inputCode);
 }
 
 // Load tier list from a given code
@@ -253,25 +218,10 @@ function generateCode() {
 
   let encodedCode = compactCode ? btoa(compactCode) : "new";
 
-  // Create compressed version for Discord-friendly sharing
-  const shortCode = compressCode(encodedCode);
-
-  // Check if the code is still too long for Discord
-  const isTooLong = shortCode && shortCode.length > 1000; // Safety margin
-
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   const shareableUrl = `${baseUrl}?c=${encodedCode}`;
-  const shortUrl = `${baseUrl}?s=${shortCode}`;
 
-  // Copy the appropriate code to clipboard
-  if (isTooLong) {
-    // If code is too long, just copy the URL instead
-    navigator.clipboard.writeText(shortUrl);
-  } else {
-    // Normal case - copy the update command with short code
-    navigator.clipboard.writeText(`/update code:${shortCode}`);
-  }
-
+  navigator.clipboard.writeText(`/update code:${encodedCode}`);
   Swal.fire({
     icon: encodedCode === "new" ? 'error' : 'success',
     title: encodedCode === "new" ? 'Just a Minute!' : 'Important!',
@@ -281,30 +231,23 @@ function generateCode() {
               encodedCode === "new"
                 ? `<p class="text-2xl font-bold mt-2 mb-4">No Tierlist!</p>
                    <p class="text-red-500">Empty tierlists cannot be saved</p>`
-                : isTooLong
-                  ? `<p>Your tierlist is very detailed! The code is too long for Discord.</p>
-                     <p class="text-2xl font-bold mt-2 mb-4 break-all">Use this URL instead</p>
-                     <p class="text-sm break-all">${shortUrl}</p>
-                     <p class="text-sm">This URL has been copied to your clipboard.</p>
-                     <p class="text-sm mt-2">You can share this link directly.</p>`
-                  : `<p>The tier list still needs to be added to the global rankings by running:</p>
-                     <p class="text-2xl font-bold mt-2 mb-4 break-all">/update code:${shortCode}</p>
-                     <p class="text-sm">This command has been copied to your clipboard.</p>
-                     <p class="text-sm mt-2">Using short code (${shortCode.length} chars) instead of full code (${encodedCode.length} chars)</p>`
+                : `<p>The tier list still needs to be added to the global rankings by running:</p>
+                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/update code:${encodedCode}</p>
+                   <p class="text-sm">This command has been copied to your clipboard.</p>`
             }
           </div>`,
     confirmButtonText: 'OK',
     confirmButtonColor: '#10B981',
-    showCancelButton: !isTooLong, // Only show "Share" option if not already sharing URL
+    showCancelButton: true,
     cancelButtonText: 'Share',
     cancelButtonColor: '#3085d6'
   }).then((result) => {
-    if (!isTooLong && result.dismiss === Swal.DismissReason.cancel) {
-      navigator.clipboard.writeText(shortUrl).then(() => {
+    if (result.dismiss === Swal.DismissReason.cancel) {
+      navigator.clipboard.writeText(shareableUrl).then(() => {
         Swal.fire({
           icon: 'success',
           title: 'URL Copied!',
-          text: 'The shareable short URL has been copied to your clipboard.',
+          text: 'The shareable URL has been copied to your clipboard.',
           confirmButtonText: 'OK',
           confirmButtonColor: '#10B981'
         });
@@ -315,7 +258,7 @@ function generateCode() {
   // After generating the code and showing the success message, clear the backup
   clearTierlistBackup();
 
-  return shortCode || encodedCode;
+  return encodedCode;
 }
 
 // Render the tiers and pool, toggling editing state
