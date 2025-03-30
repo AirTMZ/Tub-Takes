@@ -84,12 +84,6 @@
     "old": true
   },
   {
-    "name": "Blue Bomber Slushee",
-    "image": "Blue_Bomber_Slushee.jpg",
-    "code": "c6959d22",
-    "old": true
-  },
-  {
     "name": "Blue Ice",
     "image": "Blue_Ice.jpg",
     "code": "7b19bfc2",
@@ -351,30 +345,6 @@
     "name": "Flavor Fusion",
     "image": "Flavor_Fusion.jpg",
     "code": "1f553e58",
-    "old": true
-  },
-  {
-    "name": "Focus Lemon Limelight",
-    "image": "Focus_Lemon_Limelight.jpg",
-    "code": "736e59de",
-    "old": true
-  },
-  {
-    "name": "Focus Orange Oasis",
-    "image": "Focus_Orange_Oasis.jpg",
-    "code": "f8c86f05",
-    "old": true
-  },
-  {
-    "name": "Focus Peach Paradise",
-    "image": "Focus_Peach_Paradise.jpg",
-    "code": "2f193a41",
-    "old": true
-  },
-  {
-    "name": "Focus Strawberry Splash",
-    "image": "Focus_Strawberry_Splash.jpg",
-    "code": "93d33ad4",
     "old": true
   },
   {
@@ -874,12 +844,6 @@
     "image": "PewDiePie's_Yuzu_Slash.jpg",
     "code": "78ea80f6",
     "old": false
-  },
-  {
-    "name": "Pewdiepie",
-    "image": "Pewdiepie.jpg",
-    "code": "b4982c4e",
-    "old": true
   },
   {
     "name": "Pickle Juice",
