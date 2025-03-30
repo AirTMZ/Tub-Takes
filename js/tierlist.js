@@ -50,7 +50,16 @@ function checkURLforCode() {
   const code = url.searchParams.get("c");
 
   if (code) {
-    loadTierListFromCode(code);
+    // Fix base64 padding and replace URL-safe characters
+    let fixedCode = code;
+    // Add padding if needed
+    while (fixedCode.length % 4 !== 0) {
+      fixedCode += '=';
+    }
+    // Replace URL-safe characters with standard base64 characters
+    fixedCode = fixedCode.replace(/-/g, '+').replace(/_/g, '/');
+
+    loadTierListFromCode(fixedCode);
     console.log("Loaded tier list from URL code");
 
     url.searchParams.delete("c");
