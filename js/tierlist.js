@@ -392,6 +392,10 @@ function handleToggleChange() {
   showOldFlavors = this.checked;
   updateToggleAppearance(this);
 
+  // Save the current search text before re-rendering
+  const searchInput = document.getElementById("searchInput");
+  const currentSearchText = searchInput ? searchInput.value : "";
+
   // Completely re-render the tierlist instead of just updating the pool
   // This maintains the correct draggable behavior
   if (draggableInstance) {
@@ -399,49 +403,51 @@ function handleToggleChange() {
     draggableInstance = null;
   }
   renderTierList();
+
+  // Restore the search text after re-rendering
+  if (currentSearchText) {
+    const newSearchInput = document.getElementById("searchInput");
+    if (newSearchInput) {
+      newSearchInput.value = currentSearchText;
+      // Trigger the search to apply filtering with the restored text
+      newSearchInput.dispatchEvent(new Event('input'));
+    }
+  }
 }
 
 // Setup search functionality for pool items
 function setupSearch() {
   const searchInput = document.getElementById("searchInput");
 
-  searchInput.value = "";
+  // Don't reset the input value here
+  // searchInput.value = ""; <- Remove or comment out this line
 
-  searchInput.addEventListener("input", function() {
+  // Remove existing listeners to prevent duplicates
+  const newSearchInput = searchInput.cloneNode(true);
+  searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+
+  newSearchInput.addEventListener("input", function() {
     const searchText = this.value.toLowerCase().replace(/\s+/g, '');
 
     // Process any lingering class transformations first
     processItemClassTransformations();
 
     if (searchText === '') {
-      document.querySelectorAll(".pool-item").forEach(item => {
-        item.style.display = "";
+      // Show all items in pool when search is empty
+      document.querySelectorAll('.pool-item').forEach(item => {
+        item.style.display = '';
       });
-      return;
-    }
-
-    const searchCharFreq = getCharacterFrequency(searchText);
-    // Only select pool items that are actually IN the pool container
-    const poolItems = document.querySelector('.pool').querySelectorAll(".pool-item");
-
-    poolItems.forEach(item => {
-      const flavorName = item.dataset.name.toLowerCase().replace(/\s+/g, '');
-      const flavorCharFreq = getCharacterFrequency(flavorName);
-
-      let isMatch = true;
-      for (const [char, count] of Object.entries(searchCharFreq)) {
-        if (!flavorCharFreq[char] || flavorCharFreq[char] < count) {
-          isMatch = false;
-          break;
+    } else {
+      // Filter items based on search text
+      document.querySelectorAll('.pool-item').forEach(item => {
+        const name = item.dataset.name.toLowerCase().replace(/\s+/g, '');
+        if (name.includes(searchText)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
         }
-      }
-
-      if (isMatch) {
-        item.style.display = "";
-      } else {
-        item.style.display = "none";
-      }
-    });
+      });
+    }
   });
 }
 
