@@ -324,3 +324,70 @@ if user_input.strip():
             print(f"Added '{product_data['name']}' to the JSON file.")
     else:
         print("Failed to extract product information from the provided URL.")
+
+# After handling the specific URL case, ask if user wants to manually add products
+if not user_input.strip():
+    print("\nWould you like to manually add products?")
+    manual_input = input("Enter 'y' to manually add products or any other key to exit: ")
+
+    if manual_input.lower() == 'y':
+        while True:
+            print("\n--- Manual Product Entry ---")
+            product_name = input("Enter product name (or leave empty to finish): ")
+
+            if not product_name.strip():
+                print("Manual entry complete.")
+                break
+
+            image_url = input("Enter direct image URL: ")
+            if not image_url.strip():
+                print("Skipping this entry due to missing image URL.")
+                continue
+
+            # Generate image filename and path
+            img_filename = f"{product_name.replace(' ', '_')}.jpg"
+            img_path = os.path.join(image_dir, img_filename)
+
+            # Download the image
+            try:
+                download_success = download_image(image_url, img_path)
+                if download_success:
+                    print(f"Downloaded image for '{product_name}'")
+                else:
+                    print(f"Image for '{product_name}' already exists or couldn't be downloaded")
+
+                # Generate a unique code for the flavor
+                flavor_code = generate_flavor_code(product_name)
+
+                # Create product data
+                product_data = {
+                    'name': product_name,
+                    'image': img_filename,
+                    'code': flavor_code,
+                    'old': False  # Default to not old, can be modified later
+                }
+
+                # Check if product already exists
+                product_exists = False
+                for item in existing_data:
+                    if item['name'] == product_name:
+                        product_exists = True
+                        print(f"Product '{product_name}' already exists in the database.")
+                        # Ask if user wants to update the existing entry
+                        update = input("Update existing entry? (y/n): ")
+                        if update.lower() == 'y':
+                            item['image'] = img_filename
+                            save_json_data(existing_data)
+                            print(f"Updated '{product_name}' in the JSON file.")
+                        break
+
+                if not product_exists:
+                    existing_data.append(product_data)
+                    save_json_data(existing_data)
+                    print(f"Added '{product_name}' to the JSON file.")
+
+            except Exception as e:
+                print(f"Error adding product '{product_name}': {e}")
+                continue
+
+print("Script completed. All products have been processed.")
