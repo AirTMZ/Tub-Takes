@@ -696,6 +696,55 @@ function setupScrollToTopButton() {
   toggleScrollButtonVisibility();
 }
 
+// Function to evenly distribute all flavors across tiers
+function distributeEvenly() {
+  if (!flavors || flavors.length === 0) {
+    console.error("No flavors loaded yet");
+    return;
+  }
+
+  // Reset tierList
+  tierList = TIERS.reduce((acc, tier) => {
+    acc[tier.name] = [];
+    return acc;
+  }, {});
+
+  // Filter flavors based on showOldFlavors setting
+  const availableFlavors = flavors.filter(flavor => showOldFlavors || !flavor.old);
+
+  // Calculate how many flavors per tier
+  const tierCount = TIERS.length;
+  const flavorsPerTier = Math.floor(availableFlavors.length / tierCount);
+  const remainder = availableFlavors.length % tierCount;
+
+  // Distribute flavors evenly
+  let flavorIndex = 0;
+
+  TIERS.forEach((tier, tierIndex) => {
+    // Calculate how many flavors this tier should get
+    const extraFlavor = tierIndex < remainder ? 1 : 0;
+    const count = flavorsPerTier + extraFlavor;
+
+    // Add flavors to this tier
+    for (let i = 0; i < count && flavorIndex < availableFlavors.length; i++) {
+      tierList[tier.name].push(availableFlavors[flavorIndex].name);
+      flavorIndex++;
+    }
+  });
+
+  // Make sure we're in editing mode
+  isEditing = true;
+
+  // Render the updated tier list
+  renderTierList();
+
+  console.log("Evenly distributed all flavors across tiers");
+  return `Distributed ${flavorIndex} flavors across ${tierCount} tiers`;
+}
+
+// Add to window object to make it callable from console
+window.distributeEvenly = distributeEvenly;
+
 // Add this to your DOMContentLoaded event listener
 document.addEventListener("DOMContentLoaded", function() {
   fetchFlavors();
