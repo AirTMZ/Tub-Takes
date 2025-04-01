@@ -103,60 +103,29 @@ function loadTierListFromCode(inputCode) {
     console.log("Decoded code:", compactCode);
 
     const processedFlavors = new Set();
-    let currentTier = null;
-    let currentCode = "";
-    let parsingCode = false;
 
-    for (let i = 0; i < compactCode.length; i++) {
-      const char = compactCode[i];
+    // Split the code by commas to get each tier section
+    const tierSections = compactCode.split(',');
 
-      if (TIERS.some(t => t.name === char) && !parsingCode) {
-        currentTier = char;
-        parsingCode = true;
-        currentCode = "";
-        continue;
-      }
+    for (const section of tierSections) {
+      if (section.length < 3) continue; // Skip invalid sections
 
-      if (char === "," && parsingCode) {
-        if (currentCode && currentTier) {
+      // First character is the tier
+      const currentTier = section[0];
+
+      // The rest are flavor codes (each 2 characters)
+      for (let i = 1; i < section.length; i += 2) {
+        // Make sure we have 2 characters for a complete code
+        if (i + 1 <= section.length) {
+          const currentCode = section.substring(i, i + 2);
           const flavorName = flavorCodeToName[currentCode];
+
           if (flavorName && !processedFlavors.has(flavorName)) {
             if (TIERS.some(t => t.name === currentTier)) {
               tierList[currentTier].push(flavorName);
               processedFlavors.add(flavorName);
             }
           }
-        }
-        currentCode = "";
-        continue;
-      }
-
-      if (TIERS.some(t => t.name === char) && parsingCode) {
-        if (currentCode && currentTier) {
-          const flavorName = flavorCodeToName[currentCode];
-          if (flavorName && !processedFlavors.has(flavorName)) {
-            if (TIERS.some(t => t.name === currentTier)) {
-              tierList[currentTier].push(flavorName);
-              processedFlavors.add(flavorName);
-            }
-          }
-        }
-        currentTier = char;
-        currentCode = "";
-        continue;
-      }
-
-      if (parsingCode) {
-        currentCode += char;
-      }
-    }
-
-    if (currentCode && currentTier) {
-      const flavorName = flavorCodeToName[currentCode];
-      if (flavorName && !processedFlavors.has(flavorName)) {
-        if (TIERS.some(t => t.name === currentTier)) {
-          tierList[currentTier].push(flavorName);
-          processedFlavors.add(flavorName);
         }
       }
     }
@@ -200,60 +169,125 @@ function generateCode() {
   for (const tier of TIERS) {
     const tierItems = tierList[tier.name] || [];
     if (tierItems.length > 0) {
+      // Start with the tier name
       let tierCode = tier.name;
 
+      // Append all flavor codes without separators
       tierItems.forEach(item => {
         const code = flavorNameToCode[item];
         if (code && !encodedFlavors.has(item)) {
-          tierCode += code + ",";
+          tierCode += code;
           encodedFlavors.add(item);
         } else {
           console.warn(`Missing code for flavor: ${item}`);
         }
       });
 
-      compactCode += tierCode;
+      // Add a comma after each tier section
+      compactCode += tierCode + ',';
     }
+  }
+
+  // Remove trailing comma if it exists
+  if (compactCode.endsWith(',')) {
+    compactCode = compactCode.slice(0, -1);
   }
 
   let encodedCode = compactCode ? btoa(compactCode) : "new";
 
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   const shareableUrl = `${baseUrl}?c=${encodedCode}`;
+  const discordCommand = `/update code:${encodedCode}`;
 
-  navigator.clipboard.writeText(`/update code:${encodedCode}`);
-  Swal.fire({
-    icon: encodedCode === "new" ? 'error' : 'success',
-    title: encodedCode === "new" ? 'Just a Minute!' : 'Important!',
-    html: `<div class="text-center">
-            <p>${encodedCode === "new" ? "Your tier list cannot be exported." : "You still have one more step to save."}</p>
-            ${
-              encodedCode === "new"
-                ? `<p class="text-2xl font-bold mt-2 mb-4">No Tierlist!</p>
-                   <p class="text-red-500">Empty tierlists cannot be saved</p>`
-                : `<p>The tier list still needs to be added to the global rankings by running:</p>
-                   <p class="text-2xl font-bold mt-2 mb-4 break-all">/update code:${encodedCode}</p>
-                   <p class="text-sm">This command has been copied to your clipboard.</p>`
-            }
-          </div>`,
-    confirmButtonText: 'OK',
-    confirmButtonColor: '#10B981',
-    showCancelButton: true,
-    cancelButtonText: 'Share',
-    cancelButtonColor: '#3085d6'
-  }).then((result) => {
-    if (result.dismiss === Swal.DismissReason.cancel) {
-      navigator.clipboard.writeText(shareableUrl).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'URL Copied!',
-          text: 'The shareable URL has been copied to your clipboard.',
-          confirmButtonText: 'OK',
-          confirmButtonColor: '#10B981'
-        });
-      });
-    }
-  });
+  // Don't copy automatically - let user select which option they want
+  if (encodedCode === "new") {
+    Swal.fire({
+      icon: 'error',
+      title: 'Just a Minute!',
+      html: `<div class="text-center"><p>Your tier list cannot be exported.</p>
+             <p class="text-red-500">Empty tierlists cannot be saved</p></div>`,
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#10B981'
+    });
+  } else {
+    Swal.fire({
+      title: 'Share your tier list',
+      html: `
+        <div class="text-left">
+          <p class="mb-4 text-gray-700">Copy one of the options:</p>
+
+          <div class="mb-6">
+            <p class="font-bold mb-2 text-gray-800">Code:</p>
+            <div class="flex items-center">
+              <input type="text" id="code-input" value="${encodedCode}"
+                class="flex-1 p-3 border border-gray-300 bg-gray-50 text-gray-800 rounded-l" readonly>
+              <button onclick="copyToClipboard('code-input')"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-r transition-colors">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <p class="font-bold mb-2 text-gray-800">Discord Bot Command:</p>
+            <div class="flex items-center">
+              <input type="text" id="command-input" value="${discordCommand}"
+                class="flex-1 p-3 border border-gray-300 bg-gray-50 text-gray-800 rounded-l" readonly>
+              <button onclick="copyToClipboard('command-input')"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-r transition-colors">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <p class="font-bold mb-2 text-gray-800">Shareable Link:</p>
+            <div class="flex items-center">
+              <input type="text" id="link-input" value="${shareableUrl}"
+                class="flex-1 p-3 border border-gray-300 bg-gray-50 text-gray-800 rounded-l" readonly>
+              <button onclick="copyToClipboard('link-input')"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded-r transition-colors">
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      `,
+      confirmButtonText: 'Done',
+      confirmButtonColor: '#10B981',
+      width: '600px',
+      background: '#ffffff',
+      customClass: {
+        title: 'text-gray-900 text-2xl mb-4',
+        popup: 'rounded-lg',
+        confirmButton: 'bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded transition-colors'
+      },
+      didOpen: () => {
+        // Add a global function to handle copy functionality
+        window.copyToClipboard = function(elementId) {
+          const copyText = document.getElementById(elementId);
+          copyText.select();
+          copyText.setSelectionRange(0, 99999); /* For mobile devices */
+          navigator.clipboard.writeText(copyText.value);
+
+          // Show brief success feedback by changing button color
+          const button = document.querySelector(`#${elementId}`).nextElementSibling;
+          const originalBackgroundColor = button.style.backgroundColor;
+          const originalText = button.textContent;
+
+          // Change button to show success
+          button.style.backgroundColor = '#10B981'; // Green success color
+          button.textContent = 'Copied!';
+
+          // Reset button after a moment
+          setTimeout(() => {
+            button.style.backgroundColor = originalBackgroundColor;
+            button.textContent = originalText;
+          }, 1000);
+        };
+      }
+    });
+  }
 
   // After generating the code and showing the success message, clear the backup
   clearTierlistBackup();
