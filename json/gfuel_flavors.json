@@ -3,15 +3,13 @@
     "name": "30 Serving Tub",
     "image": "30_Serving_Tub.jpg",
     "code": "cb58ae67",
-    "old": false,
-    "image_id": "1681831753"
+    "old": false
   },
   {
     "name": "Akatsuki Blood",
     "image": "Akatsuki_Blood.jpg",
     "code": "d8615e5f",
-    "old": false,
-    "image_id": "1728530167"
+    "old": false
   },
   {
     "name": "Atari 2600",
@@ -23,22 +21,19 @@
     "name": "Awakening",
     "image": "Awakening.jpg",
     "code": "3703079c",
-    "old": false,
-    "image_id": "1742623194"
+    "old": false
   },
   {
     "name": "Bahama Mama",
     "image": "Bahama_Mama.jpg",
     "code": "4aca68f3",
-    "old": false,
-    "image_id": "1742452552"
+    "old": false
   },
   {
     "name": "Baka Blast",
     "image": "Baka_Blast.jpg",
     "code": "fbda91f5",
-    "old": false,
-    "image_id": "1741968760"
+    "old": false
   },
   {
     "name": "Battle Juice",
@@ -50,15 +45,13 @@
     "name": "Berry Bomb",
     "image": "Berry_Bomb.jpg",
     "code": "857c0941",
-    "old": false,
-    "image_id": "1742452542"
+    "old": false
   },
   {
     "name": "Black Ice",
     "image": "Black_Ice.jpg",
     "code": "b25e6881",
-    "old": false,
-    "image_id": "1742452546"
+    "old": false
   },
   {
     "name": "Black On Blackberry",
@@ -94,8 +87,7 @@
     "name": "Blue Ice",
     "image": "Blue_Ice.jpg",
     "code": "7b19bfc2",
-    "old": false,
-    "image_id": "1742611859"
+    "old": false
   },
   {
     "name": "Bobby Boysenberry",
@@ -125,15 +117,13 @@
     "name": "BroFist Blast",
     "image": "BroFist_Blast.jpg",
     "code": "06cb67c3",
-    "old": false,
-    "image_id": "1732163257"
+    "old": false
   },
   {
     "name": "Brooke's Revive-Revive Fruit",
     "image": "Brooke's_Revive-Revive_Fruit.jpg",
     "code": "33da17a5",
-    "old": false,
-    "image_id": "1742452474"
+    "old": false
   },
   {
     "name": "Bubble Gum",
@@ -145,15 +135,13 @@
     "name": "CLICKBAIT",
     "image": "CLICKBAIT.jpg",
     "code": "70b0f4e2",
-    "old": false,
-    "image_id": "1742452557"
+    "old": false
   },
   {
     "name": "Cadenza",
     "image": "Cadenza.jpg",
     "code": "6a27dd3a",
-    "old": false,
-    "image_id": "1742452627"
+    "old": false
   },
   {
     "name": "Caffeine Free Orange",
@@ -171,15 +159,13 @@
     "name": "Caramel Apple",
     "image": "Caramel_Apple.jpg",
     "code": "0fff6bf5",
-    "old": false,
-    "image_id": "1742632716"
+    "old": false
   },
   {
     "name": "Celeste Strawberry",
     "image": "Celeste_Strawberry.jpg",
     "code": "c644015e",
-    "old": false,
-    "image_id": "1740417209"
+    "old": false
   },
   {
     "name": "Cherry Limeade",
@@ -233,8 +219,7 @@
     "name": "Crimson Tears",
     "image": "Crimson_Tears.jpg",
     "code": "4440792c",
-    "old": false,
-    "image_id": "1742452565"
+    "old": false
   },
   {
     "name": "Dancing Dragon",
@@ -246,22 +231,19 @@
     "name": "Dark Hadoutea",
     "image": "Dark_Hadoutea.jpg",
     "code": "e8d3bd44",
-    "old": false,
-    "image_id": "1742452653"
+    "old": false
   },
   {
     "name": "Demon Ink",
     "image": "Demon_Ink.jpg",
     "code": "f85549d8",
-    "old": false,
-    "image_id": "1742624747"
+    "old": false
   },
   {
     "name": "Devil Hunter",
     "image": "Devil_Hunter.jpg",
     "code": "ec262f8d",
-    "old": false,
-    "image_id": "1742635979"
+    "old": false
   },
   {
     "name": "Divine Peach",
@@ -285,15 +267,13 @@
     "name": "Dream Demon",
     "image": "Dream_Demon.jpg",
     "code": "248703b1",
-    "old": false,
-    "image_id": "1742452620"
+    "old": false
   },
   {
     "name": "Drop Shot Citrus",
     "image": "Drop_Shot_Citrus.jpg",
     "code": "ef3d7624",
-    "old": false,
-    "image_id": "1742452580"
+    "old": false
   },
   {
     "name": "Dubmelon Mint",
@@ -323,8 +303,7 @@
     "name": "Evil Emperor",
     "image": "Evil_Emperor.jpg",
     "code": "c2829930",
-    "old": false,
-    "image_id": "1742632911"
+    "old": false
   },
   {
     "name": "Faze 51",
@@ -348,8 +327,7 @@
     "name": "Feisty Latina",
     "image": "Feisty_Latina.jpg",
     "code": "dd0bbff1",
-    "old": false,
-    "image_id": "1741968780"
+    "old": false
   },
   {
     "name": "Flavor Fusion",
@@ -373,15 +351,13 @@
     "name": "Fruit Punch",
     "image": "Fruit_Punch.jpg",
     "code": "2e33e1ef",
-    "old": false,
-    "image_id": "1742600569"
+    "old": false
   },
   {
     "name": "Full Release",
     "image": "Full_Release.jpg",
     "code": "b6990da0",
-    "old": false,
-    "image_id": "1742452602"
+    "old": false
   },
   {
     "name": "Galaxy Grape",
@@ -405,15 +381,13 @@
     "name": "Gohan Blackberry Tea",
     "image": "Gohan_Blackberry_Tea.jpg",
     "code": "d5ba1901",
-    "old": false,
-    "image_id": "1743221253"
+    "old": false
   },
   {
     "name": "Gojo's Domain Expansion",
     "image": "Gojo's_Domain_Expansion.jpg",
     "code": "2f11b582",
-    "old": false,
-    "image_id": "1735850607"
+    "old": false
   },
   {
     "name": "Golden Apple Pear",
@@ -425,15 +399,13 @@
     "name": "Good Guys",
     "image": "Good_Guys.jpg",
     "code": "ee70883f",
-    "old": false,
-    "image_id": "1742452559"
+    "old": false
   },
   {
     "name": "Goth GF",
     "image": "Goth_GF.jpg",
     "code": "86d96fbb",
-    "old": false,
-    "image_id": "1714691428"
+    "old": false
   },
   {
     "name": "Grandmas Apple Pie",
@@ -457,8 +429,7 @@
     "name": "Green Sour PewDiePie",
     "image": "Green_Sour_PewDiePie.jpg",
     "code": "00f4774e",
-    "old": false,
-    "image_id": "1677800694"
+    "old": false
   },
   {
     "name": "Guava",
@@ -482,15 +453,13 @@
     "name": "HYPE SAUCE",
     "image": "HYPE_SAUCE.jpg",
     "code": "5cc81680",
-    "old": false,
-    "image_id": "1742452593"
+    "old": false
   },
   {
     "name": "Hack 'N' Slash",
     "image": "Hack_'N'_Slash.jpg",
     "code": "f8553857",
-    "old": false,
-    "image_id": "1742452584"
+    "old": false
   },
   {
     "name": "Health Potion",
@@ -502,29 +471,25 @@
     "name": "Heaven Mini Tub",
     "image": "Heaven_Mini_Tub.jpg",
     "code": "e9abbae5",
-    "old": false,
-    "image_id": "1742619019"
+    "old": false
   },
   {
     "name": "Hell Mini Tub",
     "image": "Hell_Mini_Tub.jpg",
     "code": "9c96ee2e",
-    "old": false,
-    "image_id": "1742619019"
+    "old": false
   },
   {
     "name": "Hibiscus Tea",
     "image": "Hibiscus_Tea.jpg",
     "code": "df3f3c29",
-    "old": false,
-    "image_id": "1682380841"
+    "old": false
   },
   {
     "name": "Hidden Blade",
     "image": "Hidden_Blade.jpg",
     "code": "070c59b1",
-    "old": false,
-    "image_id": "1742618395"
+    "old": false
   },
   {
     "name": "Hive Nectar",
@@ -560,15 +525,13 @@
     "name": "Immuno-Fluid",
     "image": "Immuno-Fluid.jpg",
     "code": "7efcecc3",
-    "old": false,
-    "image_id": "1742452568"
+    "old": false
   },
   {
     "name": "Isaac's Tears",
     "image": "Isaac's_Tears.jpg",
     "code": "fcf2893f",
-    "old": false,
-    "image_id": "1742452595"
+    "old": false
   },
   {
     "name": "Iskreem",
@@ -580,15 +543,13 @@
     "name": "Jynxzi's Juice",
     "image": "Jynxzi's_Juice.jpg",
     "code": "c0a02d84",
-    "old": false,
-    "image_id": "1742452600"
+    "old": false
   },
   {
     "name": "Kamehameha",
     "image": "Kamehameha.jpg",
     "code": "4a951c58",
-    "old": false,
-    "image_id": "1663794757"
+    "old": false
   },
   {
     "name": "Karnage Pog Juice",
@@ -600,8 +561,7 @@
     "name": "Karnival Kraze",
     "image": "Karnival_Kraze.jpg",
     "code": "8206f156",
-    "old": false,
-    "image_id": "1742452585"
+    "old": false
   },
   {
     "name": "Key Lime Pie",
@@ -625,15 +585,13 @@
     "name": "Kiwi Strawberry",
     "image": "Kiwi_Strawberry.jpg",
     "code": "ebde720d",
-    "old": false,
-    "image_id": "1742452604"
+    "old": false
   },
   {
     "name": "Knuckles' Sour Power",
     "image": "Knuckles'_Sour_Power.jpg",
     "code": "fe6202d5",
-    "old": false,
-    "image_id": "1660320417"
+    "old": false
   },
   {
     "name": "Las Plagas",
@@ -657,8 +615,7 @@
     "name": "Lime Margarita",
     "image": "Lime_Margarita.jpg",
     "code": "ad543f11",
-    "old": false,
-    "image_id": "1687279949"
+    "old": false
   },
   {
     "name": "Liquid Lullaby",
@@ -670,8 +627,7 @@
     "name": "MS-M31-0N",
     "image": "MS-M31-0N.jpg",
     "code": "ec4ef2ad",
-    "old": false,
-    "image_id": "1742603401"
+    "old": false
   },
   {
     "name": "Maidens Blood",
@@ -689,15 +645,13 @@
     "name": "Mango Lemonade",
     "image": "Mango_Lemonade.jpg",
     "code": "8a18d437",
-    "old": false,
-    "image_id": "1742452607"
+    "old": false
   },
   {
     "name": "Mega Man™ Blue Bomber Slushee",
     "image": "Mega_Man™_Blue_Bomber_Slushee.jpg",
     "code": "4c6e0ec4",
-    "old": false,
-    "image_id": "1742585535"
+    "old": false
   },
   {
     "name": "Mega Potion",
@@ -709,8 +663,7 @@
     "name": "Miami Nights",
     "image": "Miami_Nights.jpg",
     "code": "ae1248a0",
-    "old": false,
-    "image_id": "1742452612"
+    "old": false
   },
   {
     "name": "Mighty Poo",
@@ -722,8 +675,7 @@
     "name": "Miku's Sweet Melodies Diva",
     "image": "Miku's_Sweet_Melodies_Diva.jpg",
     "code": "d78b1683",
-    "old": false,
-    "image_id": "1742452590"
+    "old": false
   },
   {
     "name": "Miso Ramen",
@@ -765,22 +717,19 @@
     "name": "Naruto's Rasengan",
     "image": "Naruto's_Rasengan.jpg",
     "code": "9da76904",
-    "old": false,
-    "image_id": "1679352452"
+    "old": false
   },
   {
     "name": "Naruto's Sage Mode",
     "image": "Naruto's_Sage_Mode.jpg",
     "code": "f50a3639",
-    "old": false,
-    "image_id": "1742611848"
+    "old": false
   },
   {
     "name": "Nemesis Tea",
     "image": "Nemesis_Tea.jpg",
     "code": "33157f89",
-    "old": false,
-    "image_id": "1742601534"
+    "old": false
   },
   {
     "name": "Ninja Cotton Candy",
@@ -792,8 +741,7 @@
     "name": "Nuka Cola",
     "image": "Nuka_Cola.jpg",
     "code": "282d0c96",
-    "old": false,
-    "image_id": "1742452617"
+    "old": false
   },
   {
     "name": "Ocean Potion",
@@ -805,8 +753,7 @@
     "name": "Ocean Water",
     "image": "Ocean_Water.jpg",
     "code": "715ae4d4",
-    "old": false,
-    "image_id": "1741968810"
+    "old": false
   },
   {
     "name": "Onions And Waffles",
@@ -836,8 +783,7 @@
     "name": "POWER PELLET",
     "image": "POWER_PELLET.jpg",
     "code": "0769f3b7",
-    "old": false,
-    "image_id": "1742619366"
+    "old": false
   },
   {
     "name": "Party Punch",
@@ -867,22 +813,19 @@
     "name": "PewDiePie",
     "image": "PewDiePie.jpg",
     "code": "d350995b",
-    "old": false,
-    "image_id": "1742452623"
+    "old": false
   },
   {
     "name": "PewDiePie Black Light Edition",
     "image": "PewDiePie_Black_Light_Edition.jpg",
     "code": "b27dfdce",
-    "old": false,
-    "image_id": "1700508421"
+    "old": false
   },
   {
     "name": "PewDiePie's Yuzu Slash",
     "image": "PewDiePie's_Yuzu_Slash.jpg",
     "code": "78ea80f6",
-    "old": false,
-    "image_id": "1742633966"
+    "old": false
   },
   {
     "name": "Pickle Juice",
@@ -918,8 +861,7 @@
     "name": "Playtime Cooler",
     "image": "Playtime_Cooler.jpg",
     "code": "af0cc3f9",
-    "old": false,
-    "image_id": "1742636954"
+    "old": false
   },
   {
     "name": "Pog Juice",
@@ -937,8 +879,7 @@
     "name": "Quirk",
     "image": "Quirk.jpg",
     "code": "45f088c6",
-    "old": false,
-    "image_id": "1742452606"
+    "old": false
   },
   {
     "name": "Radioactive Lemonade",
@@ -962,15 +903,13 @@
     "name": "Ragin' Gummy Fish Remastered",
     "image": "Ragin'_Gummy_Fish_Remastered.jpg",
     "code": "21735da8",
-    "old": false,
-    "image_id": "1742452637"
+    "old": false
   },
   {
     "name": "Rainbow Sherbet",
     "image": "Rainbow_Sherbet.jpg",
     "code": "1ef02952",
-    "old": false,
-    "image_id": "1742611629"
+    "old": false
   },
   {
     "name": "Rapid Fire",
@@ -1006,15 +945,13 @@
     "name": "Robin's Flower-Flower Fruit",
     "image": "Robin's_Flower-Flower_Fruit.jpg",
     "code": "3958df5e",
-    "old": false,
-    "image_id": "1742452472"
+    "old": false
   },
   {
     "name": "Rubik's Twist",
     "image": "Rubik's_Twist.jpg",
     "code": "10f366d6",
-    "old": false,
-    "image_id": "1742452642"
+    "old": false
   },
   {
     "name": "Rush",
@@ -1032,43 +969,37 @@
     "name": "Shiny Splash",
     "image": "Shiny_Splash.jpg",
     "code": "cecc1ac0",
-    "old": false,
-    "image_id": "1660320174"
+    "old": false
   },
   {
     "name": "Shiny Splash Remastered",
     "image": "Shiny_Splash_Remastered.jpg",
     "code": "8e755471",
-    "old": false,
-    "image_id": "1742452550"
+    "old": false
   },
   {
     "name": "Shoryuken Surge",
     "image": "Shoryuken_Surge.jpg",
     "code": "fa273540",
-    "old": false,
-    "image_id": "1742452655"
+    "old": false
   },
   {
     "name": "Snow Cone",
     "image": "Snow_Cone.jpg",
     "code": "75471be4",
-    "old": false,
-    "image_id": "1742452663"
+    "old": false
   },
   {
     "name": "Sonic’s Peach Rings",
     "image": "Sonic’s_Peach_Rings.jpg",
     "code": "ac547811",
-    "old": false,
-    "image_id": "1660320704"
+    "old": false
   },
   {
     "name": "Sour Blue Chug Rug",
     "image": "Sour_Blue_Chug_Rug.jpg",
     "code": "a1ac6ffb",
-    "old": false,
-    "image_id": "1742452563"
+    "old": false
   },
   {
     "name": "Sour Cherry",
@@ -1092,8 +1023,7 @@
     "name": "Sour Fruit Punch",
     "image": "Sour_Fruit_Punch.jpg",
     "code": "230aebbf",
-    "old": false,
-    "image_id": "1742603312"
+    "old": false
   },
   {
     "name": "Sour Green Apple",
@@ -1111,8 +1041,7 @@
     "name": "Sour Pixel Potion",
     "image": "Sour_Pixel_Potion.jpg",
     "code": "cfafd5de",
-    "old": false,
-    "image_id": "1742601717"
+    "old": false
   },
   {
     "name": "Sour Power",
@@ -1124,8 +1053,7 @@
     "name": "Spiced Orange",
     "image": "Spiced_Orange.jpg",
     "code": "a2ba74d4",
-    "old": false,
-    "image_id": "1742452667"
+    "old": false
   },
   {
     "name": "Spicy Demonade",
@@ -1143,22 +1071,19 @@
     "name": "Spyro's Dragon Fruit",
     "image": "Spyro's_Dragon_Fruit.jpg",
     "code": "b3b309b5",
-    "old": false,
-    "image_id": "1742452649"
+    "old": false
   },
   {
     "name": "Stab Stimulant",
     "image": "Stab_Stimulant.jpg",
     "code": "ab43ca4f",
-    "old": false,
-    "image_id": "1719006613"
+    "old": false
   },
   {
     "name": "Stab Stimulant 'Heartstopper'",
     "image": "Stab_Stimulant_'Heartstopper'.jpg",
     "code": "8b2ea39e",
-    "old": false,
-    "image_id": "1739564201"
+    "old": false
   },
   {
     "name": "Star Fruit",
@@ -1182,8 +1107,7 @@
     "name": "Strawberry GF",
     "image": "Strawberry_GF.jpg",
     "code": "5c28a352",
-    "old": false,
-    "image_id": "1742452659"
+    "old": false
   },
   {
     "name": "Strawberry Kiwi",
@@ -1213,8 +1137,7 @@
     "name": "Sukuna's Finger",
     "image": "Sukuna's_Finger.jpg",
     "code": "f667216d",
-    "old": false,
-    "image_id": "1742632977"
+    "old": false
   },
   {
     "name": "Summit1g",
@@ -1226,22 +1149,19 @@
     "name": "Super Saiyan",
     "image": "Super_Saiyan.jpg",
     "code": "3d2a2cbf",
-    "old": false,
-    "image_id": "1742452572"
+    "old": false
   },
   {
     "name": "Swamp Water",
     "image": "Swamp_Water.jpg",
     "code": "3c9f766c",
-    "old": false,
-    "image_id": "1742452661"
+    "old": false
   },
   {
     "name": "THE JUICE",
     "image": "THE_JUICE.jpg",
     "code": "1a07c9b4",
-    "old": false,
-    "image_id": "1742452673"
+    "old": false
   },
   {
     "name": "Tawny Owl Potion",
@@ -1277,8 +1197,7 @@
     "name": "The Ultimate Murdercorn Sour Rainbow Candy",
     "image": "The_Ultimate_Murdercorn_Sour_Rainbow_Candy.jpg",
     "code": "290ec0f4",
-    "old": false,
-    "image_id": "1689025657"
+    "old": false
   },
   {
     "name": "Tiny Tina",
@@ -1290,8 +1209,7 @@
     "name": "Traveler's Ale",
     "image": "Traveler's_Ale.jpg",
     "code": "f6b8593b",
-    "old": false,
-    "image_id": "1742452588"
+    "old": false
   },
   {
     "name": "Tropical Rain",
@@ -1321,8 +1239,7 @@
     "name": "Ultimate Chaos",
     "image": "Ultimate_Chaos.jpg",
     "code": "f3e5a624",
-    "old": false,
-    "image_id": "1732937239"
+    "old": false
   },
   {
     "name": "Unicorn Sunshine",
@@ -1340,50 +1257,43 @@
     "name": "VShojo Sour",
     "image": "VShojo_Sour.jpg",
     "code": "9ea82878",
-    "old": false,
-    "image_id": "1732682306"
+    "old": false
   },
   {
     "name": "Vampire Killer",
     "image": "Vampire_Killer.jpg",
     "code": "20e4cea4",
-    "old": false,
-    "image_id": "1724276234"
+    "old": false
   },
   {
     "name": "Watermelon",
     "image": "Watermelon.jpg",
     "code": "9aa80c57",
-    "old": false,
-    "image_id": "1742611577"
+    "old": false
   },
   {
     "name": "Watermelon Limeade",
     "image": "Watermelon_Limeade.jpg",
     "code": "9ba1e3a1",
-    "old": false,
-    "image_id": "1742452682"
+    "old": false
   },
   {
     "name": "Watermelon Mint Remastered",
     "image": "Watermelon_Mint_Remastered.jpg",
     "code": "a15f584b",
-    "old": false,
-    "image_id": "1742452575"
+    "old": false
   },
   {
     "name": "White Elephant",
     "image": "White_Elephant.jpg",
     "code": "d90f021d",
-    "old": false,
-    "image_id": "1742631354"
+    "old": false
   },
   {
     "name": "Wild Swing",
     "image": "Wild_Swing.jpg",
     "code": "f28c7368",
-    "old": false,
-    "image_id": "1742452591"
+    "old": false
   },
   {
     "name": "Wolf Berry",
@@ -1395,15 +1305,13 @@
     "name": "Wumpa Fruit",
     "image": "Wumpa_Fruit.jpg",
     "code": "cd5e705c",
-    "old": false,
-    "image_id": "1742452679"
+    "old": false
   },
   {
     "name": "Yuji Itadori's Black Flash",
     "image": "Yuji_Itadori's_Black_Flash.jpg",
     "code": "7b8c3e55",
-    "old": false,
-    "image_id": "1735850607"
+    "old": false
   },
   {
     "name": "Zitz Juice",
