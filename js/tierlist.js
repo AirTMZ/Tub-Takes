@@ -193,7 +193,18 @@ function generateCode() {
     compactCode = compactCode.slice(0, -1);
   }
 
-  let encodedCode = compactCode ? btoa(compactCode) : "new";
+  // FIXED: Use UTF-8 encoding before Base64 to handle special characters
+  let encodedCode;
+  if (compactCode) {
+    // Convert string to UTF-8 array first
+    const utf8Encoder = new TextEncoder();
+    const utf8Array = utf8Encoder.encode(compactCode);
+
+    // Then convert to Base64 using a more reliable method
+    encodedCode = btoa(String.fromCharCode.apply(null, utf8Array));
+  } else {
+    encodedCode = "new";
+  }
 
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   const shareableUrl = `${baseUrl}?c=${encodedCode}`;
