@@ -99,7 +99,16 @@ function loadTierListFromCode(inputCode) {
       flavorCodeToName[flavor.code] = flavor.name;
     });
 
-    const compactCode = atob(inputCode);
+    // Fix base64 padding and replace URL-safe characters
+    let fixedCode = inputCode;
+    // Replace URL-safe characters with standard base64 characters
+    fixedCode = fixedCode.replace(/-/g, '+').replace(/_/g, '/');
+    // Add padding if needed
+    while (fixedCode.length % 4 !== 0) {
+      fixedCode += '=';
+    }
+
+    const compactCode = atob(fixedCode);
     console.log("Decoded code:", compactCode);
 
     const processedFlavors = new Set();
@@ -193,15 +202,13 @@ function generateCode() {
     compactCode = compactCode.slice(0, -1);
   }
 
-  // FIXED: Use UTF-8 encoding before Base64 to handle special characters
+  // Use standard base64 encoding without UTF-8 conversion
   let encodedCode;
   if (compactCode) {
-    // Convert string to UTF-8 array first
-    const utf8Encoder = new TextEncoder();
-    const utf8Array = utf8Encoder.encode(compactCode);
+    encodedCode = btoa(compactCode);
 
-    // Then convert to Base64 using a more reliable method
-    encodedCode = btoa(String.fromCharCode.apply(null, utf8Array));
+    // Make Base64 URL-safe
+    encodedCode = encodedCode.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   } else {
     encodedCode = "new";
   }
