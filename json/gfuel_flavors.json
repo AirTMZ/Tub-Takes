@@ -805,13 +805,6 @@
     "long_code": "460cc09f"
   },
   {
-    "name": "Ms M31 On",
-    "image": "Ms_M31_On.jpg",
-    "code": "5d",
-    "old": true,
-    "long_code": "d3075342"
-  },
-  {
     "name": "Mystery",
     "image": "Mystery.jpg",
     "code": "N$",
@@ -1057,13 +1050,6 @@
     "long_code": "72842512"
   },
   {
-    "name": "Rasengan",
-    "image": "Rasengan.jpg",
-    "code": "dO",
-    "old": true,
-    "long_code": "62dd3ddf"
-  },
-  {
     "name": "Raspberry Iced Tea",
     "image": "Raspberry_Iced_Tea.jpg",
     "code": "Rq",
@@ -1272,13 +1258,6 @@
     "code": "a_",
     "old": false,
     "long_code": "5c28a352"
-  },
-  {
-    "name": "Strawberry Kiwi",
-    "image": "Strawberry_Kiwi.jpg",
-    "code": "9c",
-    "old": true,
-    "long_code": "e1956ee3"
   },
   {
     "name": "Strawberry Shortcake",
