@@ -156,6 +156,52 @@ function loadTierListFromCode(inputCode) {
 
 // Start a new empty tier list for editing
 function startEditing() {
+  // Check if there's an existing backup before starting a new tier list
+  const backupData = localStorage.getItem('gfuel-tierlist-backup');
+
+  if (backupData) {
+    // Ask if user wants to restore the backup or start fresh
+    Swal.fire({
+      icon: 'question',
+      title: 'Existing Tierlist Found',
+      text: 'Would you like to continue editing your previous tierlist or start a new one?',
+      showCancelButton: true,
+      confirmButtonText: 'Continue Previous',
+      cancelButtonText: 'Start New',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User chose to continue with previous - load from backup
+        checkForBackup();
+      } else {
+        // User chose to start new - confirm they want to discard backup
+        Swal.fire({
+          icon: 'warning',
+          title: 'Discard Previous Tierlist?',
+          text: 'Are you sure you want to discard your previous tierlist? This cannot be undone.',
+          showCancelButton: true,
+          confirmButtonText: 'Discard',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User confirmed to discard the backup
+            clearTierlistBackup();
+            createNewTierlist();
+          }
+        });
+      }
+    });
+  } else {
+    // No backup exists, create a new tierlist
+    createNewTierlist();
+  }
+}
+
+// Helper function to create a new tierlist
+function createNewTierlist() {
   isEditing = true;
   tierList = TIERS.reduce((acc, tier) => {
     acc[tier.name] = [];
@@ -306,9 +352,6 @@ function generateCode() {
       }
     });
   }
-
-  // After generating the code and showing the success message, clear the backup
-  clearTierlistBackup();
 
   return encodedCode;
 }
@@ -634,9 +677,61 @@ function clearTierlistBackup() {
   localStorage.removeItem('gfuel-tierlist-showOldFlavors');
 }
 
-// Go back to the initial screen and clear backup
+// Go back to the initial screen and prompt about backup
 function goBack() {
-  clearTierlistBackup();
+  // First check if there's actually a backup to discard
+  const backupData = localStorage.getItem('gfuel-tierlist-backup');
+
+  if (!backupData) {
+    // No backup exists, just go back to main page without warning
+    navigateToMainPage();
+    return;
+  }
+
+  try {
+    // Parse the backup data
+    const savedTierList = JSON.parse(backupData);
+
+    // Check if any tier has items in it
+    const hasFlavors = Object.values(savedTierList).some(tierItems => tierItems.length > 0);
+
+    if (!hasFlavors) {
+      // Backup exists but is empty, clear it and go back without warning
+      clearTierlistBackup();
+      navigateToMainPage();
+      return;
+    }
+
+    // Backup exists and has actual flavors in it, show warning about discarding it
+    Swal.fire({
+      icon: 'warning',
+      title: 'Return to Main Menu?',
+      text: 'To return to the main menu, you must either save your tierlist with the SAVE button or discard it. Unsaved tierlists will be lost.',
+      showCancelButton: true,
+      confirmButtonText: 'Discard Tierlist',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User chose to discard - clear backup and navigate back
+        clearTierlistBackup();
+        navigateToMainPage();
+      }
+      // If canceled, do nothing and stay on current page
+    });
+
+  } catch (error) {
+    // If there was an error parsing the backup, it's likely corrupted
+    console.error("Error parsing backup:", error);
+    // Clear the corrupted backup and navigate back
+    clearTierlistBackup();
+    navigateToMainPage();
+  }
+}
+
+// Helper function to navigate to the main page
+function navigateToMainPage() {
   const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
   window.location.href = baseUrl;
 }
