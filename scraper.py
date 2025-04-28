@@ -204,7 +204,8 @@ def scrape_single_product(product_url):
         product_data = {
             'name': name,
             'image': img_filename,
-            'code': flavor_code  # Add the generated code
+            'code': flavor_code,  # Add the generated code
+            'old': False  # New products are not old
         }
 
         if image_id:
@@ -230,12 +231,17 @@ def scrape_collection():
     # Load existing JSON data
     existing_data = load_json_data()
 
+    # Create a list to track which flavors are still available
+    current_flavors = []
+
     # Extract product names and 1080p cover art links
     new_products = []
     for product in products:
         name_tag = product.find('div', class_='grid-product__title')
         if name_tag:
             name = name_tag.text.strip()
+            # Add to current flavors list
+            current_flavors.append(name)
         else:
             continue
 
@@ -269,6 +275,10 @@ def scrape_collection():
                 # Update the image ID if it's not present or has changed
                 if image_id and item.get('image_id') != image_id:
                     item['image_id'] = image_id
+                # Ensure this item is marked as not old since it's available
+                if item.get('old'):
+                    item['old'] = False
+                    print(f"Marked '{name}' as available (not old).")
                 break
 
         # If product doesn't exist, add it to new_products list
@@ -276,11 +286,20 @@ def scrape_collection():
             new_product = {
                 'name': name,
                 'image': img_filename,
-                'code': flavor_code  # Add the generated code
+                'code': flavor_code,  # Add the generated code
+                'old': False  # New products are not old
             }
             if image_id:
                 new_product['image_id'] = image_id
             new_products.append(new_product)
+
+    # Mark flavors as old if they're not in the current list
+    marked_old_count = 0
+    for item in existing_data:
+        if item['name'] not in current_flavors and not item.get('old'):
+            item['old'] = True
+            marked_old_count += 1
+            print(f"Marked '{item['name']}' as old (no longer available).")
 
     # Add new products to the existing data
     existing_data.extend(new_products)
@@ -289,6 +308,7 @@ def scrape_collection():
     save_json_data(existing_data)
 
     print(f"Added {len(new_products)} new products to the JSON file.")
+    print(f"Marked {marked_old_count} products as old that are no longer available.")
     print(f"Updated image IDs for all products.")
 
     return existing_data
